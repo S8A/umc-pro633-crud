@@ -1,0 +1,328 @@
+
+LEN113,Lenguaje y Comunicación I,3
+ING113,Inglés I,3
+INF102,Informática Básica,2
+CAL114,Cálculo I,4
+CIE102,Ciencia e Ingeniería,2
+LOG103,Lógica,3
+TID102,Técnicas de Investigación Documental,2
+DPT102,Deportes,2
+LEN223,Lenguaje y Comunicación II,3
+ING223,Inglés II,3
+ALG203,Algebra Lineal,3
+CAL224,Cálculo II,4
+FIS214,Física I,4
+OAE202,Organización y Administración de Empresas,2
+EDD203,Estructura de Datos,3
+ING333,Inglés III,3
+LAF312,Laboratorio de Física I,2
+CAL334,Cálculo III,4
+FIS324,Física II,4
+MAT302,Matemática Discreta,2
+BDD304,Base de Datos,4
+TEC303,Teoría Económica,3
+ING443,Inglés IV,3
+LAF422,Laboratorio de Física II,2
+CAL444,Cálculo IV,4
+FDR403,Fundamentos de Redes,3
+TDG414,Tecnología Digital I,4
+PRO413,Programación I,3
+ADC403,Arquitectura del Computador,3
+ING553,Inglés V,3
+LAD502,Laboratorio de Datos,2
+SSC502,Servicio Social Comunitario,2
+EYP503,Estadística y Probabilidad,3
+TDG524,Tecnología Digital II,4
+PRO523,Programación II,3
+SOP513,Sistemas Operativos I,3
+RYT502,Seminario de Redes y Telecomunicaciones,2
+OYP502,Organización y Programación del Trabajo,2
+GRH502,Gestión de Relaciones Humanas,2
+TYD502,Teorías y Técnicas de Decisión,2
+ING663,Inglés VI,3
+SOP623,Sistemas Operativos II,3
+ISF614,Ingeniería del Software I,4
+CAL604,Cálculo Numérico,4
+PRO633,Programación III,3
+MEI612,Metodología de la Investigación I,2
+RCB613,Redes Cableadas I,3
+RMM602,Reparación y Mantenimiento de Micros,2
+DAC602,Diseño Asistido por el Computador,2
+ING773,Inglés VII,3
+IOP703,Investigación de Operaciones,3
+ISF724,Ingeniería de Software II,4
+SDS703,Sistemas de Señales,3
+PRW703,Programación Web,3
+MEI722,Metodología de la Investigación II,2
+RCB723,Redes Cableadas II,3
+ARH702,Administración de Recursos Humanos,2
+TGR702,Técnicas Gerenciales,2
+SAU702,Sistemas Automatizados,2
+IEN803,Ingeniería Económica,3
+FDD802,Fundamentos del derecho,2
+TRD814,Transmisión de Datos I,4
+CTB803,Contabilidad General,3
+PRE803,Programación Emergente,3
+FEP803,Formulación y Evaluación de Proyectos de Ingeniería,3
+RIB813,Redes Inalámbricas I,3
+SAM802,Seguridad Ambiental y Medio Ambiente,2
+PRD802,Producción,2
+MAD802,Modelos Administrativos,2
+AUS904,Auditoria de Sistemas,4
+ETP902,Ética Profesional,2
+TEL903,Transacciones Electrónicas,3
+TRD924,Transmisión de Datos II,4
+PRO903,Programación Multimedia,3
+STG903,Seminario de Trabajo de Grado,3
+RIB923,Redes Inalámbricas II,3
+RPV902,VPN Redes Privadas Virtuales,2
+DCM902,Diseño y Control de Modelos,2
+CEP902,Control Estadístico de Procesos,2
+TLP902,Teoría de Lenguajes de Programación,2
+PAP10020,Pasantías Profesionales,20
+
+LEN113,Lenguaje y Comunicación I,3
+ING113,Inglés I,3
+INF102,Informática Básica,2
+CAL114,Cálculo I,4
+CIE102,Ciencia e Ingeniería,2
+LOG103,Lógica,3
+TID102,Técnicas de Investigación Documental,2
+DPT102,Deportes,2
+LEN223,Lenguaje y Comunicación II,3
+ING223,Inglés II,3
+ALG203,Algebra Lineal,3
+CAL224,Cálculo II,4
+FIS214,Física I,4
+OAE202,Organización y Administración de Empresas,2
+EDD203,Estructura de Datos,3
+ING333,Inglés III,3
+LAF312,Laboratorio de Física I,2
+CAL334,Cálculo III,4
+FIS324,Física II,4
+MAT302,Matemática Discreta,2
+BDD304,Base de Datos,4
+TEC303,Teoría Económica,3
+ING443,Inglés IV,3
+LAF422,Laboratorio de Física II,2
+CAL444,Cálculo IV,4
+FDR403,Fundamentos de Redes,3
+TDG414,Tecnología Digital I,4
+PRO413,Programación I,3
+ADC403,Arquitectura del Computador,3
+ING553,Inglés V,3
+LAD502,Laboratorio de Datos,2
+SSC502,Servicio Social Comunitario,2
+EYP503,Estadística y Probabilidad,3
+TDG524,Tecnología Digital II,4
+PRO523,Programación II,3
+SOP513,Sistemas Operativos I,3
+GDT502,Seminario de Gestión de Datos,2
+OYP502,Organización y Programación del Trabajo,2
+GRH502,Gestión de Relaciones Humanas,2
+TYD502,Teorías y Técnicas de Decisión,2
+ING663,Inglés VI,3
+SOP623,Sistemas Operativos II,3
+ISF614,Ingeniería del Software I,4
+CAL604,Cálculo Numérico,4
+PRO633,Programación III,3
+MEI612,Metodología de la Investigación I,2
+TCS603,Tecnología Cliente/Servidor,3
+RMM602,Reparación y Mantenimiento de Micros,2
+DAC602,Diseño Asistido por el Computador,2
+ING773,Inglés VII,3
+IOP703,Investigación de Operaciones,3
+ISF724,Ingeniería de Software II,4
+SDS703,Sistemas de Señales,3
+PRW703,Programación Web,3
+MEI722,Metodología de la Investigación II,2
+SGD703,Seguridad de Datos,3
+ARH702,Administración de Recursos Humanos,2
+TGR702,Técnicas Gerenciales,2
+SAU702,Sistemas Automatizados,2
+IEN803,Ingeniería Económica,3
+FDD802,Fundamentos del derecho,2
+TRD814,Transmisión de Datos I,4
+CTB803,Contabilidad General,3
+PRE803,Programación Emergente,3
+FEP803,Formulación y Evaluación de Proyectos de Ingeniería,3
+ABD813,Administración de Base de Datos I,3
+SAM802,Seguridad Ambiental y Medio Ambiente,2
+PRD802,Producción,2
+MAD802,Modelos Administrativos,2
+AUS904,Auditoria de Sistemas,4
+ETP902,Ética Profesional,2
+TEL903,Transacciones Electrónicas,3
+TRD924,Transmisión de Datos II,4
+PRO903,Programación Multimedia,3
+STG903,Seminario de Trabajo de Grado,3
+ABD923,Administración de Base de Datos II,3
+RPV902,VPN Redes Privadas Virtuales,2
+DCM902,Diseño y Control de Modelos,2
+CEP902,Control Estadístico de Procesos,2
+TLP902,Teoría de Lenguajes de Programación,2
+PAP10020,Pasantías Profesionales,20
+
+LEN113,Lenguaje y Comunicación I,3
+ING113,Inglés I,3
+INF102,Informática Básica,2
+CAL114,Cálculo I,4
+CIE102,Ciencia e Ingeniería,2
+LOG103,Lógica,3
+TID102,Técnicas de Investigación Documental,2
+DPT102,Deportes,2
+LEN223,Lenguaje y Comunicación II,3
+ING223,Inglés II,3
+ALG203,Algebra Lineal,3
+CAL224,Cálculo II,4
+FIS214,Física I,4
+OAE202,Organización y Administración de Empresas,2
+EDD203,Estructura de Datos,3
+ING333,Inglés III,3
+LAF312,Laboratorio de Física I,2
+CAL334,Cálculo III,4
+FIS324,Física II,4
+MAT302,Matemática Discreta,2
+BDD304,Base de Datos,4
+TEC303,Teoría Económica,3
+ING443,Inglés IV,3
+LAF422,Laboratorio de Física II,2
+CAL444,Cálculo IV,4
+FDR403,Fundamentos de Redes,3
+TDG414,Tecnología Digital I,4
+PRO413,Programación I,3
+ADC403,Arquitectura del Computador,3
+ING553,Inglés V,3
+LAD502,Laboratorio de Datos,2
+SSC502,Servicio Social Comunitario,2
+EYP503,Estadística y Probabilidad,3
+TDG524,Tecnología Digital II,4
+PRO523,Programación II,3
+SOP513,Sistemas Operativos I,3
+SSI502,Seminario de Seguridad Informática,2
+OYP502,Organización y Programación del Trabajo,2
+GRH502,Gestión de Relaciones Humanas,2
+TYD502,Teorías y Técnicas de Decisión,2
+ING663,Inglés VI,3
+SOP623,Sistemas Operativos II,3
+ISF614,Ingeniería del Software I,4
+CAL604,Cálculo Numérico,4
+PRO633,Programación III,3
+MEI612,Metodología de la Investigación I,2
+ARD603,Análisis y Reconocimiento de Delitos Informáticos,3
+RMM602,Reparación y Mantenimiento de Micros,2
+DAC602,Diseño Asistido por el Computador,2
+ING773,Inglés VII,3
+IOP703,Investigación de Operaciones,3
+ISF724,Ingeniería de Software II,4
+SDS703,Sistemas de Señales,3
+PRW703,Programación Web,3
+MEI722,Metodología de la Investigación II,2
+SIN703,Seguridad Informática,3
+ARH702,Administración de Recursos Humanos,2
+TGR702,Técnicas Gerenciales,2
+SAU702,Sistemas Automatizados,2
+IEN803,Ingeniería Económica,3
+FDD802,Fundamentos del derecho,2
+TRD814,Transmisión de Datos I,4
+CTB803,Contabilidad General,3
+PRE803,Programación Emergente,3
+FEP803,Formulación y Evaluación de Proyectos de Ingeniería,3
+CRP803,Criptografía,3
+SAM802,Seguridad Ambiental y Medio Ambiente,2
+PRD802,Producción,2
+MAD802,Modelos Administrativos,2
+AUS904,Auditoria de Sistemas,4
+ETP902,Ética Profesional,2
+TEL903,Transacciones Electrónicas,3
+TRD924,Transmisión de Datos II,4
+PRO903,Programación Multimedia,3
+STG903,Seminario de Trabajo de Grado,3
+AFO903,Análisis Forense,3
+RPV902,VPN Redes Privadas Virtuales,2
+DCM902,Diseño y Control de Modelos,2
+CEP902,Control Estadístico de Procesos,2
+TLP902,Teoría de Lenguajes de Programación,2
+PAP10020,Pasantías Profesionales,20
+
+LEN113,Lenguaje y Comunicación I,3
+ING113,Inglés I,3
+INF102,Informática Básica,2
+CAL114,Cálculo I,4
+CIE102,Ciencia e Ingeniería,2
+LOG103,Lógica,3
+TID102,Técnicas de Investigación Documental,2
+DPT102,Deportes,2
+LEN223,Lenguaje y Comunicación II,3
+ING223,Inglés II,3
+ALG203,Algebra Lineal,3
+CAL224,Cálculo II,4
+FIS214,Física I,4
+OAE202,Organización y Administración de Empresas,2
+EDD203,Estructura de Datos,3
+ING333,Inglés III,3
+LAF312,Laboratorio de Física I,2
+CAL334,Cálculo III,4
+FIS324,Física II,4
+MAT302,Matemática Discreta,2
+BDD304,Base de Datos,4
+TEC303,Teoría Económica,3
+ING443,Inglés IV,3
+LAF422,Laboratorio de Física II,2
+CAL444,Cálculo IV,4
+FDR403,Fundamentos de Redes,3
+TDG414,Tecnología Digital I,4
+PRO413,Programación I,3
+ADC403,Arquitectura del Computador,3
+ING553,Inglés V,3
+LAD502,Laboratorio de Datos,2
+SSC502,Servicio Social Comunitario,2
+EYP503,Estadística y Probabilidad,3
+TDG524,Tecnología Digital II,4
+PRO523,Programación II,3
+SOP513,Sistemas Operativos I,3
+SAP502,Seminario de Automatización de Procesos,2
+OYP502,Organización y Programación del Trabajo,2
+GRH502,Gestión de Relaciones Humanas,2
+TYD502,Teorías y Técnicas de Decisión,2
+ING663,Inglés VI,3
+SOP623,Sistemas Operativos II,3
+ISF614,Ingeniería del Software I,4
+CAL604,Cálculo Numérico,4
+PRO633,Programación III,3
+MEI612,Metodología de la Investigación I,2
+PGC603,Programación de Circuitos,3
+RMM602,Reparación y Mantenimiento de Micros,2
+DAC602,Diseño Asistido por el Computador,2
+ING773,Inglés VII,3
+IOP703,Investigación de Operaciones,3
+ISF724,Ingeniería de Software II,4
+SDS703,Sistemas de Señales,3
+PRW703,Programación Web,3
+MEI722,Metodología de la Investigación II,2
+ELT703,Electrónica,3
+ARH702,Administración de Recursos Humanos,2
+TGR702,Técnicas Gerenciales,2
+SAU702,Sistemas Automatizados,2
+IEN803,Ingeniería Económica,3
+FDD802,Fundamentos del derecho,2
+TRD814,Transmisión de Datos I,4
+CTB803,Contabilidad General,3
+PRE803,Programación Emergente,3
+FEP803,Formulación y Evaluación de Proyectos de Ingeniería,3
+MET803,Mecatrónica,3
+SAM802,Seguridad Ambiental y Medio Ambiente,2
+PRD802,Producción,2
+MAD802,Modelos Administrativos,2
+AUS904,Auditoria de Sistemas,4
+ETP902,Ética Profesional,2
+TEL903,Transacciones Electrónicas,3
+TRD924,Transmisión de Datos II,4
+PRO903,Programación Multimedia,3
+STG903,Seminario de Trabajo de Grado,3
+CPI903,Control de Procesos Industriales,3
+RPV902,VPN Redes Privadas Virtuales,2
+DCM902,Diseño y Control de Modelos,2
+CEP902,Control Estadístico de Procesos,2
+TLP902,Teoría de Lenguajes de Programación,2
+PAP10020,Pasantías Profesionales,20
