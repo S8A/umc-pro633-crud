@@ -2,14 +2,17 @@ import textwrap
 
 # Funciones auxiliares para la consola
 
-def printh1(s):
-	print(f'..:: {s.upper()} ::..')
-	print()
+def print_h1(s):
+    print(f'..:: {s.upper()} ::..')
+    print()
 
-def printh2(s):
-	print(f'{s} ::..')
+def print_h2(s):
+    print(f'{s} ::..')
 
-def printlong(s):
-	for line in textwrap.wrap(s):
-		print(line)
-	print()
+def print_long(s):
+    for line in textwrap.wrap(s):
+        print(line)
+
+def print_error(s):
+    print_long(f'ERROR: {s}')
+    print()
