@@ -3,6 +3,7 @@ from .config import config
 import argparse
 
 def main(args):
+	"""Función principal del programa."""
     if args['config']:
         config()
     else:
