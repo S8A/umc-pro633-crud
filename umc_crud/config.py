@@ -1,7 +1,10 @@
 import configparser
 from .cli import printh1, printh2, printlong
 
+# Módulo de configuración
+
 def config():
+    """Crea un nuevo archivo de configuración."""
     printh1('Configuración')
     printh2('MySQL')
     printlong('Parámetros de la conexión a la base de datos donde se '
@@ -19,3 +22,10 @@ def config():
                      'db': db}
     with open('config/config.ini', 'w') as configfile:
         conf.write(configfile)
+
+
+def read_config():
+    """Lee el archivo de configuración."""
+    conf = configparser.ConfigParser()
+    conf.read('config/config.ini')
+    return conf
