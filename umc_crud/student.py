@@ -1,46 +1,49 @@
-from .cli import print_h1, print_h2, print_long, print_error
-from .crud import get_career_info, get_student_info
+from . import crud
+from .cli import print_h1, print_h2, print_long, print_error, print_table
 
 # Módulo de estudiante
 
 def main(user_id):
     """Función principal del módulo de estudiante."""
-    print_h1(f'Módulo de Estudiante: {user_id}')
-
-    estudiante = get_student_info(user_id)
-    print(f'{estudiante["nombre"]} {estudiante["apellido"]} ('
-          f'{estudiante["ci"]}')
-    print()
+    print_h1(f'Módulo de Estudiante')
+    print_h2(user_id)
 
     # Lista de opciones con sus funciones asociadas
-    opciones = [('Consultar información personal', show_personal_info),
-                ('Consultar récord académico completo', show_record),
-                ('Consultar calificaciones por materia', find_grades),
-                ('Calcular índice académico acumulado (IAA)', calculate_iaa),
-                ('Calcular índice académico parcial (IAP)', calculate_iap),
-                ('Salir', exit_module)]
+    opciones = [['Consultar información personal', show_personal_info],
+                ['Consultar récord académico completo', show_record],
+                ['Consultar calificaciones por materia', find_grades],
+                ['Calcular índice académico acumulado (IAA)', calculate_iaa],
+                ['Calcular índice académico parcial (IAP)', calculate_iap],
+                ['Salir']]
 
     while True:
         # Mostrar las opciones del menú
-        for n, opcion in enumerate(opciones):
-            print(f'{n+1}. {opcion[0]}')
+        for i, opcion in enumerate(opciones):
+            print(f'{i+1}. {opcion[0]}')
         print()
-        # Pedir al usuario que elija alguna opción
-        opcion_menu = int(input(f'Elegir opción (1-{len(opciones)})'))
-        # Ejecutar la función correspondiente a la opción elegida
-        funcion = opciones[opcion_menu][1]
-        funcion(estudiante)
+        # Pedir al usuario que elija alguna opción entre 1 y n
+        opc = int(input(f'Elegir opción (1-{len(opciones)}): '))
+        if opc in range(1, len(opciones)):
+            # Si la opción elegida está entre 1 y n-1,
+            # ejecutar la función correspondiente
+            funcion = opciones[opc-1][1]
+            print(funcion)
+            funcion(crud.get_student_info(user_id))
+        else:
+            # De lo contrario, salir
+            print('Saliendo.')
+            break
 
 
 def show_personal_info(student_data):
     """Muestra la información personal del estudiante."""
-    print_h2('Información personal')
+    print_h2(f'Información personal: {student_data["id_usuario"]}')
     print(f'Nombre y apellido: {student_data["nombre"]} '
           f'{student_data["apellido"]}')
     print(f'C.I.: {student_data["ci"]}')
     print(f'Teléfono: {student_data["telefono"]}')
     print(f'Dirección: {student_data["direccion"]}')
-    carrera = get_career_info(student_data['id_carrera'])
+    carrera = crud.get_career_info(student_data['id_carrera'])
     print(f'Carrera: {carrera["nombre"]} Mención {carrera["mencion"]} ('
           f'{carrera["id"]}')
     print()
@@ -48,9 +51,13 @@ def show_personal_info(student_data):
 
 def show_record(student_data):
     """Muestra el record académico completo del estudiante."""
-    records = read_records(student_data['ci'])
-    for record in records:
-        print(record)
+    print_h2(f'Récord académico: {student_data["id_usuario"]}')
+    records = crud.read_records(student_data['ci'])
+    columnas = {'Materia': 'id_materia',
+                'Nota': 'nota',
+                'Período': 'periodo'}
+    anchuras = [10, 4, 10]
+    print_table(records, cols=columnas, widths=anchuras)
 
 
 def find_grades(student_data):

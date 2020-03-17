@@ -1,3 +1,4 @@
+from . import admin, student
 from .cli import print_h1, print_h2, print_long, print_error
 from .config import read_config
 from .db import execute_sql
@@ -31,9 +32,9 @@ def login():
                 # un administrador o un estudiante y se ejecuta el módulo 
                 # apropiado.
                 if result['admin'] == 0:
-                    umc_crud.student.main(result['id'])
+                    student.main(result['id'])
                 else:
-                    umc_crud.admin.main(result['id'])
+                    admin.main(result['id'])
 
                 # Se rompe el bucle
                 break
