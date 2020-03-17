@@ -29,3 +29,15 @@ def delete_record(ci, materia_id):
 	"""Elimina la calificación de un estudiante en una asignatura."""
     query = 'DELETE FROM record WHERE ci_estudiante = %s AND id_materia = %s'
     return execute_sql(query, args=(ci, materia_id))
+
+
+def get_student_info(user_id):
+    """Obtiene toda la información del estudiante según su usuario."""
+    query = 'SELECT * FROM estudiante WHERE id_usuario = %s'
+    return execute_sql(query, args=(user_id), rows=1)
+
+
+def get_career_info(carrera_id):
+    """Obtiene la información de una carrera según su código."""
+    query = 'SELECT * FROM carrera WHERE id = %s'
+    return execute_sql(query, args=(carrera_id), rows=1)
