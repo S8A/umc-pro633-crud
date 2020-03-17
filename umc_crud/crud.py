@@ -11,14 +11,17 @@ def create_record(ci, materia_id, nota):
 def read_records(ci, materia_ids=None):
     """Consulta las calificaciones de un estudiante."""
     query = ('SELECT materia.id, materia.nombre, materia.uc, '
-             'record.nota, record.periodo'
-             'FROM materia INNER JOIN record ON materia.id = record.id_materia '
+             'record.nota, record.periodo '
+             'FROM materia INNER JOIN record '
+             'ON materia.id = record.id_materia '
              'WHERE record.ci_estudiante = %s')
     args = [ci]
     if materia_ids is not None and len(materia_ids) > 0:
         # Utilizar la lista de materias si se provee
-        query += ' AND materia.id IN (%s)'
-        arguments.append(', '.join(materia_ids))
+        query += (' AND materia.id IN ('
+                  + ', '.join(['%s' for m in materia_ids])
+                  + ')')
+        args.extend(materia_ids)
     query += ' ORDER BY record.periodo'
     return(execute_sql(query, args))
 

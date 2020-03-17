@@ -65,8 +65,10 @@ def find_grades(student_data):
                'consiste de letras y números solamente, por ejemplo '
                'CAL114. Para buscar varias materias escriba '
                'sus códigos separados por espacios o comas.')
+    print()
     # Pide al usuario los códigos de materia y los separa en una lista
     materia_ids = re.split('[,\s]+', input('Materia(s): ').upper())
+    print()
     # Muestra la tabla
     print_record(crud.read_records(student_data['ci'], materia_ids))
 
@@ -88,17 +90,20 @@ def calculate_iap(student_data):
                'cursadas en ese período y períodos anteriores. Introduzca '
                'el período académico para calcular su IAP (ejemplos: 2020-01, '
                '2018-IN, 2019-02).')
+    print()
     # Pide al usuario el período académico límite
-    p = input('Período académico: ').upper()
-    if re.match('^\d{4}-(01|IN|02)$'):
+    period = input('Período académico: ').upper()
+    print()
+    if re.match('^\d{4}-(01|IN|02)$', period):
         # Si el usuario ingresó un período válido
         # Se calcula el índice académico con las materias
         # cursadas hasta el período límite
         iap = calculate_ia(
                 filter_records_until_period(
-                    crud.read_records(student_data['ci'])))
+                    crud.read_records(student_data['ci']),
+                    period))
         print(f'Su IAP es de {iap} según su récord académico '
-              f'hasta el período {p}.')
+              f'hasta el período {period}.')
     else:
         # Si no se ingresó un período válido, mostrar un error
         print_error('Período académico inválido.')
@@ -115,11 +120,11 @@ def calculate_ia(record):
 def print_record(record):
     """Muestra una tabla de récords académicos a partir de los datos dados."""
     cols = {'id': 'Código',
-            'nombre': 'Materia'
-            'uc': 'UC'
+            'nombre': 'Materia',
+            'uc': 'UC',
             'nota': 'Nota',
             'periodo': 'Período'}
-    widths = dict(zip(columnas.keys(), [10, 45, 5, 5, 10]))
+    widths = dict(zip(cols.keys(), [10, 45, 5, 5, 10]))
     print_table(record, cols, widths)
 
 
