@@ -25,7 +25,7 @@ def login():
             print()
             # Ejecuta la búsqueda por usuario y contraseña
             result = execute_sql(query,
-                                 args=(user_id, user_pw),
+                                 args=[user_id, user_pw],
                                  rows=1)
             if result is not None:
                 # Si los datos coinciden con un usuario, se verifica si es 
