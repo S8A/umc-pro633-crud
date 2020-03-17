@@ -23,8 +23,7 @@ def login():
             user_pw = input('Contraseña: ')
             print()
             # Ejecuta la búsqueda por usuario y contraseña
-            result = execute_sql(conf['mysql'],
-                                 query,
+            result = execute_sql(query,
                                  args=(user_id, user_pw),
                                  rows=1)
             if result is not None:
@@ -32,11 +31,9 @@ def login():
                 # un administrador o un estudiante y se ejecuta el módulo 
                 # apropiado.
                 if result['admin'] == 0:
-                    print('Estudiante')
-                    #umc_crud.student.main()
+                    umc_crud.student.main(result['id'])
                 else:
-                    print('Administrador')
-                    #umc_crud.admin.main()
+                    umc_crud.admin.main(result['id'])
 
                 # Se rompe el bucle
                 break

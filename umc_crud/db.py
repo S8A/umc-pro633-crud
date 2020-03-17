@@ -1,9 +1,11 @@
+from .config import read_config
 import pymysql
 
 # Módulo de manejo de base datos
 
-def connect(mysql_conf):
+def connect():
     """Crea una conexión a la base de datos indicada en la configuración."""
+    mysql_conf = read_config()['mysql']
     return pymysql.connect(host=mysql_conf['host'],
                            user=mysql_conf['user'],
                            password=mysql_conf['password'],
@@ -12,17 +14,16 @@ def connect(mysql_conf):
                            cursorclass=pymysql.cursors.DictCursor)
 
 
-def execute_sql(mysql_conf, query, args=None, rows=None):
+def execute_sql(query, args=None, rows=None):
     """
     Ejecuta una petición SQL y devuelve su resultado.
 
     Argumentos:
-    mysql_conf (dict) -- Configuración de conexión a la base de datos
     query (str) -- Petición a realizar
     args (tuple/list/dict) --  Parámetros de la petición (opc)
     rows (int or None) -- Número de filas de resultado (opc).
     """
-    connection = connect(mysql_conf)
+    connection = connect()
     result = None
     try:
         with connection.cursor() as cursor:
