@@ -96,6 +96,7 @@ CREATE TABLE `record` (
   `ci_estudiante` varchar(10) NOT NULL,
   `id_materia` varchar(10) NOT NULL,
   `nota` tinyint(2) unsigned NOT NULL,
+  `periodo` varchar(7) NOT NULL,
   PRIMARY KEY (`ci_estudiante`,`id_materia`),
   KEY `id_materia` (`id_materia`),
   CONSTRAINT `record_ibfk_1` FOREIGN KEY (`ci_estudiante`) REFERENCES `estudiante` (`ci`) ON UPDATE CASCADE,
@@ -128,4 +129,4 @@ CREATE TABLE `usuario` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-16 10:17:34
+-- Dump completed on 2020-03-16 22:54:29
