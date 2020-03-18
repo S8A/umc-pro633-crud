@@ -30,10 +30,12 @@ def main(user_id):
             funcion = opciones[opc-1][1]
             funcion(crud.get_student_info(user_id))
             cont = input('[Enter] para volver al menu principal... ')
-        else:
-            # De lo contrario, salir
+        elif opc == len(opciones):
+            # Si se elige la última opción, salir
             print('Saliendo.')
             break
+        else:
+            print_error('Opción inválida. Intente de nuevo.')
 
 
 def show_personal_info(student_data):
@@ -53,8 +55,15 @@ def show_personal_info(student_data):
 def show_record(student_data):
     """Muestra el record académico completo del estudiante."""
     print_h2(f'Récord académico: {student_data["id_usuario"]}')
+    record = crud.read_records(student_data['ci'])
     # Muestra la tabla
-    print_record(crud.read_records(student_data['ci']))
+    print_record(record)
+    # Muestra información adicional
+    uc_cursadas = [r['uc'] for r in record]
+    print(f'Materias cursadas: {len(uc_cursadas)} ({sum(uc_cursadas)} UC)')
+    uc_aprobadas = [r['uc'] for r in record if r['nota'] >= 12]
+    print(f'Materias aprobadas: {len(uc_aprobadas)} ({sum(uc_aprobadas)} UC)')
+    print()
 
 
 def find_grades(student_data):
