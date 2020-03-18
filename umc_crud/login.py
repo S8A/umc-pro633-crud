@@ -33,8 +33,10 @@ def login():
                 # apropiado.
                 if result['admin'] == 0:
                     student.main(result['id'])
-                else:
+                elif result['admin'] == 1:
                     admin.main(result['id'])
+                else:
+                    print_error('Valor inesperado en el registro de usuario.')
 
                 # Se rompe el bucle
                 break
