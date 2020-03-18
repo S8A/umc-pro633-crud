@@ -13,6 +13,11 @@ def print_h2(s):
     print(f'{s} ::..')
     print()
 
+def print_h3(s):
+    """Muestra el texto como encabezado de tercer nivel."""
+    print(f'{s} ::')
+    print()
+
 def print_long(s):
     """Muestra el texto dividido en varias líneas."""
     for line in textwrap.wrap(s):
