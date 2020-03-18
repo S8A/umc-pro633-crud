@@ -32,7 +32,7 @@ def main(user_id):
         # Mostrar las opciones del menú
         menu = []
         for category, items in full_menu.items():
-            print_h3(category)
+            print_h3(category, newline=False)
             for i, item in enumerate(items):
                 menu.append(item)
                 print(f'{len(menu)}. {item[0]}')

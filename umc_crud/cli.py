@@ -3,32 +3,38 @@ from math import ceil
 
 # Funciones auxiliares para la consola
 
-def print_h1(s):
+def print_h1(s, newline=True):
     """Muestra el texto como encabezado de primer nivel."""
     print(f'..:: {s.upper()} ::..')
-    print()
+    if newline:
+        print()
 
-def print_h2(s):
+def print_h2(s, newline=True):
     """Muestra el texto como encabezado de segundo nivel."""
     print(f'{s} ::..')
-    print()
+    if newline:
+        print()
 
-def print_h3(s):
+def print_h3(s, newline=True):
     """Muestra el texto como encabezado de tercer nivel."""
     print(f'{s} ::')
-    print()
+    if newline:
+        print()
 
-def print_long(s):
+def print_long(s, newline=True):
     """Muestra el texto dividido en varias líneas."""
     for line in textwrap.wrap(s):
         print(line)
+    if newline:
+        print()
 
-def print_error(s):
+def print_error(s, newline=True):
     """Muestra un mensaje de error con el texto dado."""
     print_long(f'ERROR: {s}')
-    print()
+    if newline:
+        print()
 
-def print_table(data, cols=None, widths=None):
+def print_table(data, cols=None, widths=None, newline=True):
     """Muestra una tabla con los datos dados."""
     if len(data) == 0:
         # Si no hay datos, no hay nada que mostrar
@@ -49,4 +55,5 @@ def print_table(data, cols=None, widths=None):
         # Mostrar datos de la tabla
         for row in data:
             print(' '.join([f'{row[col] :<{w}}' for col, w in widths.items()]))
-        print()
+        if newline:
+            print()
