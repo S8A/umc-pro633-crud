@@ -11,7 +11,7 @@ def main(user_id):
             ['Consultar récord académico completo', get_record],
             ['Consultar calificaciones por materia', find_grades],
             ['Calcular índice académico acumulado (IAA)', calculate_iaa],
-            ['Calcular índice académico parcial (IAP)', calculate_iap],
+            #['Calcular índice académico parcial (IAP)', calculate_iap],
             ['Salir']]
     while True:
         print()
@@ -48,7 +48,9 @@ def get_personal_info(student_data):
     print(f'Dirección: {student_data["direccion"]}')
     carrera = crud.read_career_info(student_data['id_carrera'])
     print(f'Carrera: {carrera["nombre"]} ({carrera["id"]})')
-    print(f'Mención {carrera["mencion"]}')
+    mencion = carrera["mencion"]
+    if mencion is not None:
+        print(f'Mención {mencion}')
     print()
 
 
@@ -63,6 +65,7 @@ def get_record(student_data):
     print(f'Materias cursadas: {len(uc_cursadas)} ({sum(uc_cursadas)} UC)')
     uc_aprobadas = [r['uc'] for r in record if r['nota'] >= 12]
     print(f'Materias aprobadas: {len(uc_aprobadas)} ({sum(uc_aprobadas)} UC)')
+    print(f'Índice Académico Acumulado (IAA): {calculate_ia(record)}')
     print()
 
 
@@ -74,7 +77,6 @@ def find_grades(student_data):
                'consiste de letras y números solamente, por ejemplo '
                'CAL114. Para buscar varias materias escriba '
                'sus códigos separados por espacios o comas.')
-    print()
     # Pide al usuario los códigos de materia y los separa en una lista
     materia_ids = re.split('[,\s]+', input('Materia(s): ').upper())
     print()
@@ -91,6 +93,7 @@ def calculate_iaa(student_data):
     print()
 
 
+# DEFINICIÓN INCORRECTA #
 def calculate_iap(student_data):
     """Calcula el índice académico parcial (IAP) del estudiante por período."""
     print_h2(f'Índice Académico Parcial: {student_data["id_usuario"]}')
@@ -99,7 +102,6 @@ def calculate_iap(student_data):
                'cursadas en ese período y períodos anteriores. Introduzca '
                'el período académico para calcular su IAP (ejemplos: 2020-01, '
                '2018-IN, 2019-02).')
-    print()
     # Pide al usuario el período académico límite
     period = input('Período académico: ').upper()
     print()
