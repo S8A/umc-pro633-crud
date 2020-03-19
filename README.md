@@ -8,16 +8,46 @@ Sistema CRUD de campus UMC hecho como proyecto de Programación 3 (PRO633).
 
 - Python 3
 - Librería [PyMySQL](https://pypi.org/project/PyMySQL/)
+- [MySQL Server](https://dev.mysql.com/downloads/mysql/)
 
 ## Instalación y uso
 
-Para descargar y utilizar el programa, clone este repositorio y ejecute el 
-módulo `umc_crud`:
+Para utilizar este programa, primero clone este repositorio:
 
 ```bash
 git clone https://github.com/S8A/umc-pro633-crud.git
 cd umc-pro633-crud
+```
+
+Luego, importe uno de los archivos del directorio `db` a su servidor MySQL para 
+crear la estructura de la base de datos. Para crear la base de datos con las 
+tablas vacías, ejecute el siguiente comando reemplazando `user` y `database` 
+por los valores correspondientes:
+
+```bash
+mysql -u user -p database < db/umc_db_structure.sql
+```
+Para crear la base de datos con los datos iniciales de ejemplo:
+
+```bash
+mysql -u user -p database < db/umc_db.sql
+```
+
+Finalmente, para utilizar el programa solo tiene que ejecutar el módulo 
+`umc_crud`:
+
+```bash
 python3 -m umc_crud
+```
+
+Al iniciar el programa, este verifica si el archivo de configuración 
+`config/config.ini` existe y está completo. En caso negativo, solicita al 
+usuario los datos de conexión al servidor MySQL y los almacena en un nuevo 
+archivo de configuración. Si luego desea modificarlo, puede editarlo 
+manualmente o ejecutar el programa con la opción `--config`:
+
+```bash
+python3 -m umc_crud --config
 ```
 
 ## Licencia
