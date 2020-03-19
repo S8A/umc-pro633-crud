@@ -30,9 +30,7 @@ def print_long(s, newline=True):
 
 def print_error(s, newline=True):
     """Muestra un mensaje de error con el texto dado."""
-    print_long(f'ERROR: {s}')
-    if newline:
-        print()
+    print_long(f'ERROR: {s}', newline)
 
 def print_table(data, cols=None, widths=None, newline=True):
     """Muestra una tabla con los datos dados."""

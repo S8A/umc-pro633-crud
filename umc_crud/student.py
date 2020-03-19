@@ -22,7 +22,13 @@ def main(user_id):
             print(f'{i+1}. {item[0]}')
         print()
         # Pedir al usuario que elija alguna opción entre 1 y n
-        index = int(input(f'Elegir opción (1-{len(menu)}): '))
+        index = input(f'Elegir opción (1-{len(menu)}): ')
+        # Verificar si el usuario ingresó un número
+        try:
+            index = int(index)
+        except ValueError:
+            print_error('Entrada inválida. Ingrese un número.')
+            continue
         print()
         if index in range(1, len(menu)):
             # Si la opción elegida está entre 1 y n-1,
