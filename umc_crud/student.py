@@ -11,7 +11,7 @@ def main(user_id):
             ['Consultar récord académico completo', get_record],
             ['Consultar calificaciones por materia', find_grades],
             ['Calcular índice académico acumulado (IAA)', calculate_iaa],
-            #['Calcular índice académico parcial (IAP)', calculate_iap],
+            ['Calcular índice académico parcial (IAP)', calculate_iap],
             ['Salir']]
     while True:
         print()
@@ -93,28 +93,28 @@ def calculate_iaa(student_data):
     print()
 
 
-# DEFINICIÓN INCORRECTA #
 def calculate_iap(student_data):
     """Calcula el índice académico parcial (IAP) del estudiante por período."""
     print_h2(f'Índice Académico Parcial: {student_data["id_usuario"]}')
-    print_long('El IAP es el índice académico acumulado hasta un período '
-               'determinado, es decir, tomando en cuenta solo las materias '
-               'cursadas en ese período y períodos anteriores. Introduzca '
-               'el período académico para calcular su IAP (ejemplos: 2020-01, '
+    print_long('El IAP es el índice académico calculado con las materias '
+               'de un solo período académico. Introduzca el período '
+               'académico para calcular su IAP (ejemplos: 2020-01, '
                '2018-IN, 2019-02).')
     # Pide al usuario el período académico límite
     period = input('Período académico: ').upper()
     print()
     if re.match('^\d{4}-(01|IN|02)$', period):
         # Si el usuario ingresó un período válido
-        # Se calcula el índice académico con las materias
-        # cursadas hasta el período límite
-        iap = calculate_ia(
-                filter_records_until_period(
-                    crud.read_records(student_data['ci']),
-                    period))
-        print(f'Su IAP es de {iap} según su récord académico '
-              f'hasta el período {period}.')
+        # Filtrar record de materias
+        record = [r for r in crud.read_records(student_data['ci'])
+                  if r['periodo'] == period]
+        # Calcular índice académico parcial
+        iap = calculate_ia(record)
+        if iap is not None:
+            print(f'Su IAP es de {iap} según su récord académico '
+                  f'hasta el período {period}.')
+        else:
+            print(f'No tiene materias cursadas en el período {period}.')
     else:
         # Si no se ingresó un período válido, mostrar un error
         print_error('Período académico inválido.')
@@ -123,8 +123,9 @@ def calculate_iap(student_data):
 
 def calculate_ia(record):
     """Calcula el índice académico acumulado a partir del récord dado."""
-    suma_ponderada = sum([r['uc']*r['nota'] for r in record])
     suma_uc = sum([r['uc'] for r in record])
+    if suma_uc == 0: return None
+    suma_ponderada = sum([r['uc']*r['nota'] for r in record])
     return round(suma_ponderada/suma_uc, 2)
 
 
@@ -137,23 +138,3 @@ def print_record(record):
             'periodo': 'Período'}
     widths = dict(zip(cols.keys(), [10, 45, 5, 5, 10]))
     print_table(record, cols, widths)
-
-
-def filter_records_until_period(record, period):
-    """Conserva los registros de materias cursadas hasta el período dado."""
-    # Separa los componentes del período de entrada (año y lapso)
-    yi, li = period.split('-')
-    # Crea la lista que almacenará el récord filtrado
-    result = []
-    # Para cada registro en el récord
-    for r in record:
-        # Se separan los componentes del período
-        # en que se cursó la materia
-        y, l = r['periodo'].split('-')
-        # Si la materia se cursó en el año anterior, o
-        # en el mismo año pero en el mismo lapso o uno
-        # anterior, se conserva el registro
-        seq =  ['01', 'IN', '02']
-        if y < yi or (y == yi and seq.index(l) <= seq.index(li)):
-            result.append(r)
-    return result
