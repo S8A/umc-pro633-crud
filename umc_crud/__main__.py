@@ -1,10 +1,10 @@
 from .login import login
-from .config import config
+from .config import config, is_configured
 import argparse
 
 def main(args):
     """Función principal del programa."""
-    if args['config']:
+    if args['config'] or not is_configured():
         config()
     else:
         login()

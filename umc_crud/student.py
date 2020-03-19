@@ -103,7 +103,7 @@ def calculate_iap(student_data):
     """Calcula el índice académico parcial (IAP) del estudiante por período."""
     print_h2(f'Índice Académico Parcial: {student_data["id_usuario"]}')
     print_long('El IAP es el índice académico calculado con las materias '
-               'de un solo período académico. Introduzca el período '
+               'cursadas en un solo período académico. Introduzca el período '
                'académico para calcular su IAP (ejemplos: 2020-01, '
                '2018-IN, 2019-02).')
     # Pide al usuario el período académico límite
@@ -117,8 +117,7 @@ def calculate_iap(student_data):
         # Calcular índice académico parcial
         iap = calculate_ia(record)
         if iap is not None:
-            print(f'Su IAP es de {iap} según su récord académico '
-                  f'hasta el período {period}.')
+            print(f'Su IAP para el período {period} es de {iap}.')
         else:
             print(f'No tiene materias cursadas en el período {period}.')
     else:
