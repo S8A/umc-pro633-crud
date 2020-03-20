@@ -33,8 +33,8 @@ def main(user_id):
         print_h2(user_id)
         # Mostrar las opciones del menú
         menu = []
-        for category, items in full_menu.items():
-            print_h3(category, newline=False)
+        for submenu, items in full_menu.items():
+            print_h3(submenu, newline=False)
             for i, item in enumerate(items):
                 menu.append(item)
                 print(f'{len(menu)}. {item[0]}')
@@ -63,13 +63,13 @@ def get_personal_info(title=True, intro=True):
         print_long('Ingrese uno o varios números de C.I. para buscar '
                    'la información personal de los estudiantes a los '
                    'que correspondan.')
-    students = crud.find_students(input_list('Cédula(s): '))
-    if not students:
+    estudiantes = crud.find_students(input_list('Cédula(s): '))
+    if not estudiantes:
         print_error('Las C.I. ingresadas no corresponden a ningún estudiante.')
     else:
-        for student_data in students:
-            print_h3(student_data['id_usuario'], newline=False)
-            student.get_personal_info(student_data, title=False)
+        for estudiante in estudiantes:
+            print_h3(estudiante['id_usuario'], newline=False)
+            student.get_personal_info(estudiante, title=False)
 
 
 def get_record(title=True, intro=True):
@@ -80,13 +80,13 @@ def get_record(title=True, intro=True):
         print_long('Ingrese uno o varios números de C.I. para buscar '
                    'los récords académicos de los estudiantes a los que '
                    'correspondan.')
-    students = crud.find_students(input_list('Cédula(s): '))
-    if not students:
+    estudiantes = crud.find_students(input_list('Cédula(s): '))
+    if not estudiantes:
         print_error('Las C.I. ingresadas no corresponden a ningún estudiante.')
     else:
-        for student_data in students:
-            print_h3(f'{student_data["id_usuario"]} : {student_data["ci"]}')
-            student.get_record(student_data, title=False)
+        for estudiante in estudiantes:
+            print_h3(f'{estudiante["id_usuario"]} : {estudiante["ci"]}')
+            student.get_record(estudiante, title=False)
 
 
 def find_grades(title=True, intro=True):
@@ -98,14 +98,14 @@ def find_grades(title=True, intro=True):
                    'códigos de materia para buscar las califaciones de '
                    'cada estudiante en cada una de esas materias que '
                    'haya cursado.')
-    students = crud.find_students(input_list('Cédula(s): '))
+    estudiantes = crud.find_students(input_list('Cédula(s): '))
     materia_ids = [materia.upper() for materia in input_list('Materia(s): ')]
-    if not students:
+    if not estudiantes:
         print_error('Las C.I. ingresadas no corresponden a ningún estudiante.')
     else:
-        for student_data in students:
-            print_h3(f'{student_data["id_usuario"]} : {student_data["ci"]}')
-            student.print_record(crud.read_records(student_data['ci'],
+        for estudiante in estudiantes:
+            print_h3(f'{estudiante["id_usuario"]} : {estudiante["ci"]}')
+            student.print_record(crud.read_records(estudiante['ci'],
                                                    materia_ids))
 
 
@@ -117,22 +117,22 @@ def make_records(title=True, intro=True):
         print_long('Ingrese uno o varios números de C.I., las materias '
                    'que va a registrar para cada estudiante, y la '
                    'calificación obtenida en cada una de ellas.')
-    students = crud.find_students(input_list('Cédula(s): '))
-    if not students:
+    estudiantes = crud.find_students(input_list('Cédula(s): '))
+    if not estudiantes:
         print_error('Las C.I. ingresadas no corresponden a ningún estudiante.')
     else:
-        for student_data in students:
-            print_h3(f'{student_data["id_usuario"]} : {student_data["ci"]}')
-            cursadas = [r['id'] for r in crud.read_records(student_data['ci'])]
-            period = input_period('Período académico: ')
-            materias = crud.find_materias_carrera(
-                student_data['id_carrera'],
-                [m.upper() for m in input_list('Materia(s): ')])
+        for estudiante in estudiantes:
+            print_h3(f'{estudiante["id_usuario"]} : {estudiante["ci"]}')
+            cursadas = [r['id'] for r in crud.read_records(estudiante['ci'])]
+            periodo = input_period('Período académico: ')
+            materias = crud.find_career_subjects(
+                estudiante['id_carrera'],
+                [materia.upper() for materia in input_list('Materia(s): ')])
             cols = {'ci_estudiante': 'Cédula',
                     'id_materia': 'Materia',
                     'nota': 'Nota',
                     'periodo': 'Período'}
-            record = []
+            por_registrar = []
             print('Calificaciones:')
             for materia in materias:
                 materia_id = materia['id_materia']
@@ -140,17 +140,17 @@ def make_records(title=True, intro=True):
                     print(f'- {materia_id} ya tiene calificación.')
                 else:
                     nota = input_int(f'- {materia_id}: ', newline=False)
-                    record.append({'ci_estudiante': student_data['ci'],
-                                   'id_materia': materia_id,
-                                   'nota': nota,
-                                   'periodo': period})
+                    por_registrar.append({'ci_estudiante': estudiante['ci'],
+                                          'id_materia': materia_id,
+                                          'nota': nota,
+                                          'periodo': periodo})
             print()
-            if record:
+            if por_registrar:
                 print('Se registrarán los siguientes datos:')
-                print_table(record, cols)
+                print_table(por_registrar, cols)
                 confirm = input_yes_no('¿Registrar datos? (s/n): ')
                 if confirm:
-                    crud.create_records(record)
+                    crud.create_records(por_registrar)
                     print_long('Datos registrados exitosamente.')
                 else:
                     print_long('Registro cancelado.')
