@@ -66,7 +66,7 @@ def main(user_id):
 def get_personal_info(title=True, intro=True):
     """Consulta la información personal de uno o varios estudiantes."""
     if title:
-        print_h1('Consultar información personal')
+        print_h2('Consultar información personal')
     if intro:
         print_long('Ingrese uno o varios números de C.I. para buscar '
                    'la información personal de los estudiantes a los '
@@ -77,12 +77,26 @@ def get_personal_info(title=True, intro=True):
         print_error('Las C.I. ingresadas no corresponden a ningún estudiante.')
     else:
         for estudiante in estudiantes:
+            print_h3(estudiante['id_usuario'], newline=False)
             student.get_personal_info(estudiante, title=False)
 
 
-def get_record():
+def get_record(title=True, intro=True):
     """Consulta el registro académico completo de uno o varios estudiante."""
-    print('TODO: get_record')
+    if title:
+        print_h2('Consultar récord académico completo')
+    if intro:
+        print_long('Ingrese uno o varios números de C.I. para buscar '
+                   'los récords académicos de los estudiantes a los que '
+                   'correspondan.')
+    estudiantes = crud.find_students(input_list('Cédula(s): '))
+    print()
+    if not estudiantes:
+        print_error('Las C.I. ingresadas no corresponden a ningún estudiante.')
+    else:
+        for estudiante in estudiantes:
+            print_h3(f'{estudiante["id_usuario"]} : {estudiante["ci"]}')
+            student.get_record(estudiante, title=False)
 
 
 def find_grades():
