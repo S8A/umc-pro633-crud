@@ -85,3 +85,22 @@ def input_int(prompt, newline=True):
             continue
         break
     return result
+
+
+def input_yes_no(prompt, yes='^[Ss]$', no='^[Nn]$', newline=True):
+    """Pide al usuario que ingrese sí o no a la pregunta que se le hace."""
+    result = None
+    while True:
+        user_input = input(prompt)
+        if newline:
+            print()
+        if re.match(yes, user_input):
+            result = True
+        elif re.match(no, user_input):
+            result = False
+        else:
+            print_error('Entrada inválida. Ingrese sí o no como se indica.',
+                        newline)
+            continue
+        break
+    return result
