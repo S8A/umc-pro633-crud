@@ -71,14 +71,14 @@ def get_personal_info(title=True, intro=True):
         print_long('Ingrese uno o varios números de C.I. para buscar '
                    'la información personal de los estudiantes a los '
                    'que correspondan.')
-    estudiantes = crud.find_students(input_list('Cédula(s): '))
+    students = crud.find_students(input_list('Cédula(s): '))
     print()
-    if not estudiantes:
+    if not students:
         print_error('Las C.I. ingresadas no corresponden a ningún estudiante.')
     else:
-        for estudiante in estudiantes:
-            print_h3(estudiante['id_usuario'], newline=False)
-            student.get_personal_info(estudiante, title=False)
+        for student_data in students:
+            print_h3(student_data['id_usuario'], newline=False)
+            student.get_personal_info(student_data, title=False)
 
 
 def get_record(title=True, intro=True):
@@ -89,19 +89,35 @@ def get_record(title=True, intro=True):
         print_long('Ingrese uno o varios números de C.I. para buscar '
                    'los récords académicos de los estudiantes a los que '
                    'correspondan.')
-    estudiantes = crud.find_students(input_list('Cédula(s): '))
+    students = crud.find_students(input_list('Cédula(s): '))
     print()
-    if not estudiantes:
+    if not students:
         print_error('Las C.I. ingresadas no corresponden a ningún estudiante.')
     else:
-        for estudiante in estudiantes:
-            print_h3(f'{estudiante["id_usuario"]} : {estudiante["ci"]}')
-            student.get_record(estudiante, title=False)
+        for student_data in students:
+            print_h3(f'{student_data["id_usuario"]} : {student_data["ci"]}')
+            student.get_record(student_data, title=False)
 
 
-def find_grades():
+def find_grades(title=True, intro=True):
     """Consulta las calificaciones de uno o varios estudiante."""
-    print('TODO: find_grades')
+    if title:
+        print_h2('Consultar calificaciones por materia')
+    if intro:
+        print_long('Ingrese uno o varios números de C.I. y uno o varios '
+                   'códigos de materia para buscar las califaciones de '
+                   'cada estudiante en cada una de esas materias que '
+                   'haya cursado.')
+    students = crud.find_students(input_list('Cédula(s): '))
+    materia_ids = [materia.upper() for materia in input_list('Materia(s): ')]
+    print()
+    if not students:
+        print_error('Las C.I. ingresadas no corresponden a ningún estudiante.')
+    else:
+        for student_data in students:
+            print_h3(f'{student_data["id_usuario"]} : {student_data["ci"]}')
+            student.print_record(crud.read_records(student_data['ci'],
+                                                   materia_ids))
 
 
 def make_records():
