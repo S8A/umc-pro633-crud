@@ -1,7 +1,6 @@
 from . import crud
 from .cli import (print_h1, print_h2, print_long, print_error, print_table,
-    input_list, input_int)
-import re
+    input_list, input_int, input_period)
 
 # Módulo de estudiante
 
@@ -107,22 +106,16 @@ def calculate_iap(student_data, title=True, intro=True):
                    'período académico para calcular su IAP (ejemplos: '
                    '2020-01, 2018-IN, 2019-02).')
     # Pide al usuario el período académico límite
-    period = input('Período académico: ').upper()
-    print()
-    if re.match('^\d{4}-(01|IN|02)$', period):
-        # Si el usuario ingresó un período válido
-        # Filtrar record de materias
-        record = [r for r in crud.read_records(student_data['ci'])
-                  if r['periodo'] == period]
-        # Calcular índice académico parcial
-        iap = calculate_ia(record)
-        if iap is not None:
-            print(f'Su IAP para el período {period} es de {iap}.')
-        else:
-            print(f'No tiene materias cursadas en el período {period}.')
+    period = input_period('Período académico: ')
+    # Filtrar record de materias
+    record = [r for r in crud.read_records(student_data['ci'])
+              if r['periodo'] == period]
+    # Calcular índice académico parcial
+    iap = calculate_ia(record)
+    if iap is not None:
+        print(f'Su IAP para el período {period} es de {iap}.')
     else:
-        # Si no se ingresó un período válido, mostrar un error
-        print_error('Período académico inválido.')
+        print(f'No tiene materias cursadas en el período {period}.')
     print()
 
 

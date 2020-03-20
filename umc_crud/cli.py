@@ -104,3 +104,19 @@ def input_yes_no(prompt, yes='^[Ss]$', no='^[Nn]$', newline=True):
             continue
         break
     return result
+
+
+def input_period(prompt, pattern='^\d{4}-(01|IN|02)$', newline=True):
+    """Pide al usuario que ingrese un período académico válido."""
+    result = None
+    while True:
+        user_input = input(prompt).upper()
+        if newline:
+            print()
+        if re.match(pattern, user_input):
+            result = user_input
+        else:
+            print_error('Período académico inválido.')
+            continue
+        break
+    return result
