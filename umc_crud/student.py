@@ -45,9 +45,10 @@ def main(user_id):
             print_error('Opción inválida. Intente de nuevo.')
 
 
-def get_personal_info(student_data):
+def get_personal_info(student_data, title=True):
     """Consulta la información personal del estudiante."""
-    print_h2(f'Información personal: {student_data["id_usuario"]}')
+    if title:
+        print_h2(f'Información personal: {student_data["id_usuario"]}')
     print(f'Nombre y apellido: {student_data["nombre"]} '
           f'{student_data["apellido"]}')
     print(f'C.I.: {student_data["ci"]}')
@@ -61,9 +62,10 @@ def get_personal_info(student_data):
     print()
 
 
-def get_record(student_data):
+def get_record(student_data, title=True):
     """Consulta el record académico completo del estudiante."""
-    print_h2(f'Récord académico: {student_data["id_usuario"]}')
+    if title:
+        print_h2(f'Récord académico: {student_data["id_usuario"]}')
     record = crud.read_records(student_data['ci'])
     # Muestra la tabla
     print_record(record)
@@ -76,14 +78,16 @@ def get_record(student_data):
     print()
 
 
-def find_grades(student_data):
+def find_grades(student_data, title=True, intro=True):
     """Consulta las calificaciones por materia del estudiante."""
-    print_h2(f'Consulta de calificaciones: {student_data["id_usuario"]}')
-    print_long('Introduzca el código de una o varias materias para '
-               'consultar sus calificaciones. El código de materia '
-               'consiste de letras y números solamente, por ejemplo '
-               'CAL114. Para buscar varias materias escriba '
-               'sus códigos separados por espacios o comas.')
+    if title:
+        print_h2(f'Consulta de calificaciones: {student_data["id_usuario"]}')
+    if intro:
+        print_long('Introduzca el código de una o varias materias para '
+                   'consultar sus calificaciones. El código de materia '
+                   'consiste de letras y números solamente, por ejemplo '
+                   'CAL114. Para buscar varias materias escriba '
+                   'sus códigos separados por espacios o comas.')
     # Pide al usuario los códigos de materia y los separa en una lista
     materia_ids = [materia.upper() for materia in input_list('Materia(s): ')]
     print()
@@ -91,22 +95,25 @@ def find_grades(student_data):
     print_record(crud.read_records(student_data['ci'], materia_ids))
 
 
-def calculate_iaa(student_data):
+def calculate_iaa(student_data, title=True):
     """Calcula el índice académico acumulado (IAA) del estudiante."""
-    print_h2(f'Índice Académico Acumulado: {student_data["id_usuario"]}')
+    if title:
+        print_h2(f'Índice Académico Acumulado: {student_data["id_usuario"]}')
     record = crud.read_records(student_data['ci'])
     iaa = calculate_ia(record)
     print(f'Su IAA es de {iaa} según su récord académico completo.')
     print()
 
 
-def calculate_iap(student_data):
+def calculate_iap(student_data, title=True, intro=True):
     """Calcula el índice académico parcial (IAP) del estudiante por período."""
-    print_h2(f'Índice Académico Parcial: {student_data["id_usuario"]}')
-    print_long('El IAP es el índice académico calculado con las materias '
-               'cursadas en un solo período académico. Introduzca el período '
-               'académico para calcular su IAP (ejemplos: 2020-01, '
-               '2018-IN, 2019-02).')
+    if title:
+        print_h2(f'Índice Académico Parcial: {student_data["id_usuario"]}')
+    if intro:
+        print_long('El IAP es el índice académico calculado con las materias '
+                   'cursadas en un solo período académico. Introduzca el '
+                   'período académico para calcular su IAP (ejemplos: '
+                   '2020-01, 2018-IN, 2019-02).')
     # Pide al usuario el período académico límite
     period = input('Período académico: ').upper()
     print()
