@@ -66,3 +66,19 @@ def print_table(data, cols=None, widths=None, newline=True):
 def input_list(prompt, separator='[,\s]+'):
     """Pide al usuario que ingrese uno o varios ítems y extrae los datos."""
     return re.split(separator, input(prompt))
+
+
+def input_int(prompt, newline=True):
+    """Pide al usuario que ingrese un número entero y verifica la entrada."""
+    result = None
+    while True:
+        user_input = input(prompt)
+        if newline:
+            print()
+        try:
+            result = int(user_input)
+        except ValueError:
+            print_error('Entrada inválida. Ingrese un número.', newline)
+            continue
+        break
+    return result

@@ -1,6 +1,6 @@
 from . import crud
 from .cli import (print_h1, print_h2, print_long, print_error, print_table,
-    input_list)
+    input_list, input_int)
 import re
 
 # Módulo de estudiante
@@ -23,13 +23,7 @@ def main(user_id):
             print(f'{i+1}. {item[0]}')
         print()
         # Pedir al usuario que elija alguna opción entre 1 y n
-        index = input(f'Elegir opción (1-{len(menu)}): ')
-        # Verificar si el usuario ingresó un número
-        try:
-            index = int(index)
-        except ValueError:
-            print_error('Entrada inválida. Ingrese un número.')
-            continue
+        index = input_int(f'Elegir opción (1-{len(menu)}): ')
         print()
         if index in range(1, len(menu)):
             # Si la opción elegida está entre 1 y n-1,
