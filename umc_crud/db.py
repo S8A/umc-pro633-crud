@@ -14,7 +14,7 @@ def connect():
                            cursorclass=pymysql.cursors.DictCursor)
 
 
-def execute_sql(query, args=None, rows=None):
+def execute_sql(query, args=None, rows=None, many=False, test=False):
     """
     Ejecuta una petición SQL y devuelve su resultado.
 
@@ -22,19 +22,34 @@ def execute_sql(query, args=None, rows=None):
     query (str) -- Petición a realizar
     args (tuple/list/dict) --  Parámetros de la petición (opc)
     rows (int or None) -- Número de filas de resultado (opc).
+    many (bool) -- Si la petición se hará con varios conjuntos de datos.
+    test (bool) -- Modo de prueba (solo muestra la petición)
     """
-    connection = connect()
     result = None
+    # Crea la conexión a la base de datos
+    connection = connect()
     try:
         with connection.cursor() as cursor:
-            cursor.execute(query, args)
-            if rows is None:
-                result = cursor.fetchall()
-            elif rows == 1:
-                result = cursor.fetchone()
-            elif rows > 1:
-                result = cursor.fetchmany(size=rows)
+            if test and not many:
+                # Modo de prueba: imprime la petición solamente.
+                # No funciona con múltiples conjuntos de datos.
+                print(cursor.mogrify(query, args))
+            else:
+                # Ejecuta la petición
+                if many:
+                    cursor.executemany(query, args)
+                else:
+                    cursor.execute(query, args)
+                # Recoge el número de resultados que se piden
+                if rows is None:
+                    result = cursor.fetchall()
+                elif rows == 1:
+                    result = cursor.fetchone()
+                elif rows > 1:
+                    result = cursor.fetchmany(size=rows)
+        # Confirma la transacción
         connection.commit()
     finally:
+        # Cierra la conexión
         connection.close()
     return result

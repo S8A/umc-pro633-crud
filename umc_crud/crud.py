@@ -4,13 +4,13 @@ from .db import execute_sql
 
 # Tabla record
 
-def create_record(ci, materia_id, nota):
+def create_record(ci, materia_id, nota, periodo, test=False):
     """Registra la calificación de un estudiante en una asignatura."""
-    query = 'INSERT INTO record VALUES (%s, %s, %s)'
-    return execute_sql(query, args=[ci, materia_id, nota])
+    query = 'INSERT INTO record VALUES (%s, %s, %s, %s)'
+    return execute_sql(query, args=[ci, materia_id, nota, periodo], test=test)
 
 
-def read_records(ci, materia_ids=None):
+def read_records(ci, materia_ids=None, test=False):
     """Consulta las calificaciones de un estudiante."""
     query = ('SELECT materia.id, materia.nombre, materia.uc, '
              'record.nota, record.periodo '
@@ -25,40 +25,40 @@ def read_records(ci, materia_ids=None):
                   + ')')
         args.extend(materia_ids)
     query += ' ORDER BY record.periodo'
-    return(execute_sql(query, args))
+    return execute_sql(query, args, test=test)
 
 
-def update_record(ci, materia_id, nota):
+def update_record(ci, materia_id, nota, periodo, test=False):
     """Modifica la calificación de un estudiante en una asignatura."""
-    query = ('UPDATE record SET nota = %s WHERE ci_estudiante = %s '
-             'AND id_materia = %s')
-    return execute_sql(query, args=[nota, ci, materia_id])
+    query = ('UPDATE record SET nota = %s, periodo = %s, '
+             'WHERE ci_estudiante = %s AND id_materia = %s')
+    return execute_sql(query, args=[nota, periodo, ci, materia_id])
 
 
-def delete_record(ci, materia_id):
+def delete_record(ci, materia_id, test=False):
     """Elimina la calificación de un estudiante en una asignatura."""
     query = 'DELETE FROM record WHERE ci_estudiante = %s AND id_materia = %s'
-    return execute_sql(query, args=[ci, materia_id])
+    return execute_sql(query, args=[ci, materia_id], test=test)
 
 
 # Tabla estudiante
 
-def read_student_info(user_id):
+def read_student_info(user_id, test=False):
     """Consulta toda la información del estudiante según su usuario."""
     query = 'SELECT * FROM estudiante WHERE id_usuario = %s'
-    return execute_sql(query, args=[user_id], rows=1)
+    return execute_sql(query, args=[user_id], rows=1, test=test)
 
 
-def find_students(ci_list):
+def find_students(ci_list, test=False):
     """Busca estudiantes por su número de cédula."""
     query = ('SELECT * FROM estudiante WHERE ci IN ('
              + ', '.join(['%s' for ci in ci_list]) + ')')
-    return execute_sql(query, args=ci_list)
+    return execute_sql(query, args=ci_list, test=test)
 
 
 # Tabla carrera
 
-def read_career_info(carrera_id):
+def read_career_info(carrera_id, test=False):
     """Consulta la información de una carrera según su código."""
     query = 'SELECT * FROM carrera WHERE id = %s'
-    return execute_sql(query, args=[carrera_id], rows=1)
+    return execute_sql(query, args=[carrera_id], rows=1, test=test)
