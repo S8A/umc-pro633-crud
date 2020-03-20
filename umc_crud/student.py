@@ -24,7 +24,6 @@ def main(user_id):
         print()
         # Pedir al usuario que elija alguna opción entre 1 y n
         index = input_int(f'Elegir opción (1-{len(menu)}): ')
-        print()
         if index in range(1, len(menu)):
             # Si la opción elegida está entre 1 y n-1,
             # ejecutar la función correspondiente
@@ -84,7 +83,6 @@ def find_grades(student_data, title=True, intro=True):
                    'sus códigos separados por espacios o comas.')
     # Pide al usuario los códigos de materia y los separa en una lista
     materia_ids = [materia.upper() for materia in input_list('Materia(s): ')]
-    print()
     # Muestra la tabla
     print_record(crud.read_records(student_data['ci'], materia_ids))
 

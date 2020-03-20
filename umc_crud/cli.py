@@ -63,9 +63,12 @@ def print_table(data, cols=None, widths=None, newline=True):
             print()
 
 
-def input_list(prompt, separator='[,\s]+'):
+def input_list(prompt, separator='[,\s]+', newline=True):
     """Pide al usuario que ingrese uno o varios ítems y extrae los datos."""
-    return re.split(separator, input(prompt))
+    result = re.split(separator, input(prompt))
+    if newline:
+        print()
+    return result
 
 
 def input_int(prompt, newline=True):
