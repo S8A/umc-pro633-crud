@@ -10,6 +10,13 @@ def create_record(ci, materia_id, nota, periodo, test=False):
     return execute_sql(query, args=[ci, materia_id, nota, periodo], test=test)
 
 
+def create_records(record):
+    """Registra calificaciones de varias materias y estudiantes."""
+    query = 'INSERT INTO record VALUES (%s, %s, %s, %s)'
+    args = [tuple(r.values()) for r in record]
+    return execute_sql(query, args, many=True)
+
+
 def read_records(ci, materia_ids=None, test=False):
     """Consulta las calificaciones de un estudiante."""
     query = ('SELECT materia.id, materia.nombre, materia.uc, '
@@ -62,3 +69,15 @@ def read_career_info(carrera_id, test=False):
     """Consulta la información de una carrera según su código."""
     query = 'SELECT * FROM carrera WHERE id = %s'
     return execute_sql(query, args=[carrera_id], rows=1, test=test)
+
+
+# Tabla materia_carrera
+
+def find_materias_carrera(carrera_id, materia_ids, test=False):
+    """Busca materias de una carrera por su código."""
+    query = ('SELECT id_materia FROM materia_carrera WHERE id_carrera = %s '
+             + 'AND id_materia IN ('
+             + ', '.join(['%s' for materia in materia_ids]) + ')')
+    args = [carrera_id]
+    args.extend(materia_ids)
+    return execute_sql(query, args, test=test)
