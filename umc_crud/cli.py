@@ -1,3 +1,4 @@
+import re
 import textwrap
 from math import ceil
 
@@ -9,17 +10,20 @@ def print_h1(s, newline=True):
     if newline:
         print()
 
+
 def print_h2(s, newline=True):
     """Muestra el texto como encabezado de segundo nivel."""
     print(f'{s} ::..')
     if newline:
         print()
 
+
 def print_h3(s, newline=True):
     """Muestra el texto como encabezado de tercer nivel."""
     print(f'{s} ::')
     if newline:
         print()
+
 
 def print_long(s, newline=True):
     """Muestra el texto dividido en varias líneas."""
@@ -28,15 +32,17 @@ def print_long(s, newline=True):
     if newline:
         print()
 
+
 def print_error(s, newline=True):
     """Muestra un mensaje de error con el texto dado."""
     print_long(f'ERROR: {s}', newline)
 
+
 def print_table(data, cols=None, widths=None, newline=True):
     """Muestra una tabla con los datos dados."""
-    if len(data) == 0:
+    if not data:
         # Si no hay datos, no hay nada que mostrar
-        print('Tabla vacía')
+        print_error('Tabla vacía')
     else:
         if cols is None:
             # Si no se proveen nombres de columna manualmente,
@@ -55,3 +61,8 @@ def print_table(data, cols=None, widths=None, newline=True):
             print(' '.join([f'{row[col] :<{w}}' for col, w in widths.items()]))
         if newline:
             print()
+
+
+def input_list(prompt, separator='[,\s]+'):
+    """Pide al usuario que ingrese uno o varios ítems y extrae los datos."""
+    return re.split(separator, input(prompt))

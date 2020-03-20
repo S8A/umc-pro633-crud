@@ -1,5 +1,6 @@
 from . import crud
-from .cli import print_h1, print_h2, print_long, print_error, print_table
+from .cli import (print_h1, print_h2, print_long, print_error, print_table,
+    input_list)
 import re
 
 # Módulo de estudiante
@@ -84,7 +85,7 @@ def find_grades(student_data):
                'CAL114. Para buscar varias materias escriba '
                'sus códigos separados por espacios o comas.')
     # Pide al usuario los códigos de materia y los separa en una lista
-    materia_ids = re.split('[,\s]+', input('Materia(s): ').upper())
+    materia_ids = [materia.upper() for materia in input_list('Materia(s): ')]
     print()
     # Muestra la tabla
     print_record(crud.read_records(student_data['ci'], materia_ids))
