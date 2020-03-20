@@ -1,6 +1,9 @@
 from . import crud
+from . import student
 from .cli import (print_h1, print_h2, print_h3, print_long, print_error,
-    print_table)
+    print_table, input_list)
+import re
+
 
 def main(user_id):
     """Función principal del módulo de administrador."""
@@ -60,29 +63,47 @@ def main(user_id):
             print_error('Opción inválida. Intente de nuevo.')
 
 
-def get_personal_info():
+def get_personal_info(title=True, intro=True):
     """Consulta la información personal de uno o varios estudiantes."""
-    print('TODO: get_personal_info')
+    if title:
+        print_h1('Consultar información personal')
+    if intro:
+        print_long('Ingrese uno o varios números de C.I. para buscar '
+                   'la información personal de los estudiantes a los '
+                   'que correspondan.')
+    estudiantes = crud.find_students(input_list('Cédula(s): '))
+    print()
+    if not estudiantes:
+        print_error('Las C.I. ingresadas no corresponden a ningún estudiante.')
+    else:
+        for estudiante in estudiantes:
+            student.get_personal_info(estudiante, title=False)
+
 
 def get_record():
     """Consulta el registro académico completo de uno o varios estudiante."""
     print('TODO: get_record')
 
+
 def find_grades():
     """Consulta las calificaciones de uno o varios estudiante."""
     print('TODO: find_grades')
+
 
 def make_records():
     """Registra calificaciones de un estudiante sin cambiar las anteriores."""
     print('TODO: make_records')
 
+
 def load_csv():
     """Registra calificaciones de varios estudiantes a partir de un CSV."""
     print('TODO: load_csv')
 
+
 def update_record():
     """Modifica calificaciones de uno o varios estudiantes."""
     print('TODO: update_record')
+
 
 def delete_record():
     """Elimina calificaciones de uno o varios estudiantes."""

@@ -1,6 +1,8 @@
 from .db import execute_sql
 
-# Módulo de creación, consulta, modificación y eliminación de registros
+# Módulo de creación, consulta, modificación y eliminación de datos de la BDD
+
+# Tabla record
 
 def create_record(ci, materia_id, nota):
     """Registra la calificación de un estudiante en una asignatura."""
@@ -39,11 +41,22 @@ def delete_record(ci, materia_id):
     return execute_sql(query, args=[ci, materia_id])
 
 
+# Tabla estudiante
+
 def read_student_info(user_id):
     """Consulta toda la información del estudiante según su usuario."""
     query = 'SELECT * FROM estudiante WHERE id_usuario = %s'
     return execute_sql(query, args=[user_id], rows=1)
 
+
+def find_students(ci_list):
+    """Busca estudiantes por su número de cédula."""
+    query = ('SELECT * FROM estudiante WHERE ci IN ('
+             + ', '.join(['%s' for ci in ci_list]) + ')')
+    return execute_sql(query, args=ci_list)
+
+
+# Tabla carrera
 
 def read_career_info(carrera_id):
     """Consulta la información de una carrera según su código."""
