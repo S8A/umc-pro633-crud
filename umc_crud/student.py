@@ -25,7 +25,7 @@ def main(user_id):
             # Si la opción elegida está entre 1 y n-1,
             # ejecutar la función correspondiente
             func = menu[index-1][1]
-            func(crud.read_student_info(user_id))
+            func(crud.find_student_by_username(user_id))
             cont = input('[Enter] para volver al menú principal... ')
         elif index == len(menu):
             # Si se elige la última opción, salir

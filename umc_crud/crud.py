@@ -50,10 +50,16 @@ def delete_record(ci, materia_id, test=False):
 
 # Tabla estudiante
 
-def read_student_info(usuario_id, test=False):
-    """Consulta toda la información del estudiante según su usuario."""
+def find_student_by_username(usuario_id, test=False):
+    """Consulta toda la información de un estudiante según su usuario."""
     query = 'SELECT * FROM estudiante WHERE id_usuario = %s'
     return execute_sql(query, args=[usuario_id], rows=1, test=test)
+
+
+def find_student_by_ci(ci, test=False):
+    """Consulta toda la información de un estudiante según su cédula."""
+    query = 'SELECT * FROM estudiante  WHERE ci = %s'
+    return execute_sql(query, args=[ci], rows=1, test=test)
 
 
 def find_students(ci_list, test=False):
@@ -73,8 +79,15 @@ def read_career_info(carrera_id, test=False):
 
 # Tabla materia_carrera
 
+def find_career_subject(carrera_id, materia_id, test=False):
+    """Busca una materia en una carrera por su código"""
+    query = ('SELECT id_materia FROM materia_carrera '
+             'WHERE id_carrera = %s AND id_materia = %s')
+    return execute_sql(query, args=[carrera_id, materia_id], test=test)
+
+
 def find_career_subjects(carrera_id, materia_ids, test=False):
-    """Busca materias de una carrera por su código."""
+    """Busca materias en una carrera por su código."""
     query = ('SELECT id_materia FROM materia_carrera WHERE id_carrera = %s '
              + 'AND id_materia IN ('
              + ', '.join(['%s' for materia in materia_ids]) + ')')
