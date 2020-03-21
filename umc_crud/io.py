@@ -66,12 +66,12 @@ def print_table(data, cols=None, widths=None, newline=True):
 
 def input_list(prompt, separator='[,\s]+', newline=True):
     """Pide al usuario que ingrese uno o varios ítems y extrae los datos."""
-    # Pide la entrada y la separa por el patrón dado
-    result = re.split(separator, input(prompt))
+    # Toma la entrada del usuario y la separa por el patrón dado
+    items = re.split(separator, input(prompt))
     if newline:
         print()
-    # Devuelve el resultado
-    return result
+    # Devuelve los ítems ingresados
+    return items
 
 
 def input_int(prompt, newline=True):
@@ -92,49 +92,73 @@ def input_int(prompt, newline=True):
             continue
         # Si llegó hasta aquí, la entrada es válida. Termina el ciclo
         break
+    # Devuelve el resultado
     return result
 
 
 def input_yes_no(prompt, yes='^[Ss]$', no='^[Nn]$', newline=True):
     """Pide al usuario que ingrese sí o no a la pregunta que se le hace."""
-    result = None
+    answer = None
     while True:
-        user_input = input(prompt)
+        # Toma la entrada del usuario y quita espacios extra alrededor
+        user_input = input(prompt).strip()
         if newline:
             print()
         if re.match(yes, user_input):
-            result = True
+            # Respuesta afirmativa
+            answer = True
         elif re.match(no, user_input):
-            result = False
+            # Respuesta negativa
+            answer = False
         else:
+            # Si la entrada no cumple con ninguno de los patrones,
+            # muestra mensaje de error
             print_error('Entrada inválida. Ingrese sí o no como se indica.',
                         newline)
+            # Continúa el bucle para que pida la entrada de nuevo
             continue
+        # Si llegó hasta aquí, la entrada es válida. Termina el ciclo
         break
-    return result
+    # Devuelve la respuesta
+    return answer
 
 
-def input_period(prompt, pattern='^\d{4}-(01|IN|02)$', newline=True):
+def input_period(prompt, newline=True):
     """Pide al usuario que ingrese un período académico válido."""
-    result = None
+    period = None
     while True:
-        user_input = input(prompt).upper()
+        # Toma la entrada del usuario en mayúsculas y quita espacios alrededor
+        user_input = input(prompt).upper().strip()
         if newline:
             print()
-        if re.match(pattern, user_input):
-            result = user_input
+        if validate_period(user_input):
+            # Si la entrada es un período académico válido, toma su valor
+            period = user_input
         else:
+            # De lo contrario, se muestra un error
             print_error('Período académico inválido.')
+            # Continúa el bucle para que pida la entrada de nuevo
             continue
+        # Si llegó hasta aquí, la entrada es válida. Termina el ciclo
         break
-    return result
+    # Devuelve el período académico ingresado
+    return period
 
 
 def read_csv(filename, delim=',', quote='"'):
     """Extrae el contenido de un archivo CSV."""
-    result = []
+    content = []
+    # Abre el archivo de forma segura
     with open(filename, newline='') as csvfile:
+        # Crea un objeto lector de CSV con el archivo dado
         csv_reader = csv.reader(csvfile, delimiter=delim, quotechar=quote)
         for row in csv_reader:
-            result.append(row)
-    return result
+            # Agrega cada fila del archivo a la lista del contenido
+            content.append(row)
+    # Devuelve el contenido del CSV
+    return content
+
+
+def validate_period(user_input, pattern='^\d{4}-(01|IN|02)$'):
+    """Verifica si la entrada corresponde con un período académico."""
+    return re.match(pattern, user_input)
