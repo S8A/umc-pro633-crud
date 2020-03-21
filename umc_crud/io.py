@@ -3,7 +3,7 @@ import re
 import textwrap
 from math import ceil
 
-# Funciones auxiliares para la consola
+# Funciones auxiliares de entrada y salida
 
 def print_h1(s, newline=True):
     """Muestra el texto como encabezado de primer nivel."""
@@ -66,9 +66,11 @@ def print_table(data, cols=None, widths=None, newline=True):
 
 def input_list(prompt, separator='[,\s]+', newline=True):
     """Pide al usuario que ingrese uno o varios ítems y extrae los datos."""
+    # Pide la entrada y la separa por el patrón dado
     result = re.split(separator, input(prompt))
     if newline:
         print()
+    # Devuelve el resultado
     return result
 
 
@@ -76,14 +78,19 @@ def input_int(prompt, newline=True):
     """Pide al usuario que ingrese un número entero y verifica la entrada."""
     result = None
     while True:
+        # Toma la entrada del usuario
         user_input = input(prompt)
         if newline:
             print()
         try:
+            # Intenta convertir la entrada a entero
             result = int(user_input)
         except ValueError:
+            # Si no se puede convertir, da error
             print_error('Entrada inválida. Ingrese un número.', newline)
+            # Continúa el bucle para que pida la entrada de nuevo
             continue
+        # Si llegó hasta aquí, la entrada es válida. Termina el ciclo
         break
     return result
 

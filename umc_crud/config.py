@@ -1,16 +1,16 @@
+from . import io
 import configparser
-from .cli import print_h1, print_h2, print_long
 
 # Módulo de configuración
 
 def config():
     """Crea un nuevo archivo de configuración."""
-    print_h1('Configuración')
-    print_h2('MySQL')
-    print_long('Parámetros de la conexión a la base de datos donde se '
-               'encuentran las tablas requeridas por el sistema CRUD. '
-               'Leer README.md para instrucciones de cómo importar la '
-               'estructura de la base de datos.')
+    io.print_h1('Configuración')
+    io.print_h2('MySQL')
+    io.print_long('Parámetros de la conexión a la base de datos donde se '
+                  'encuentran las tablas requeridas por el sistema CRUD. '
+                  'Leer README.md para instrucciones de cómo importar la '
+                  'estructura de la base de datos.')
     host = input('Host: ')
     user = input('Usuario: ')
     password = input('Contraseña: ')

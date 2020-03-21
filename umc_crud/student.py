@@ -1,6 +1,4 @@
-from . import crud
-from .cli import (print_h1, print_h2, print_long, print_error, print_table,
-    input_list, input_int, input_period)
+from . import crud, io
 
 # Módulo de estudiante
 
@@ -15,14 +13,14 @@ def main(user_id):
             ['Salir']]
     while True:
         print()
-        print_h1(f'Módulo de Estudiante')
-        print_h2(user_id)
+        io.print_h1(f'Módulo de Estudiante')
+        io.print_h2(user_id)
         # Mostrar las opciones del menú
         for i, item in enumerate(menu):
             print(f'{i+1}. {item[0]}')
         print()
         # Pedir al usuario que elija alguna opción entre 1 y n
-        index = input_int(f'Elegir opción (1-{len(menu)}): ')
+        index = io.input_int(f'Elegir opción (1-{len(menu)}): ')
         if index in range(1, len(menu)):
             # Si la opción elegida está entre 1 y n-1,
             # ejecutar la función correspondiente
@@ -34,13 +32,13 @@ def main(user_id):
             print('Saliendo.')
             break
         else:
-            print_error('Opción inválida. Intente de nuevo.')
+            io.print_error('Opción inválida. Intente de nuevo.')
 
 
 def get_personal_info(estudiante, title=True):
     """Consulta la información personal del estudiante."""
     if title:
-        print_h2(f'Información personal: {estudiante["id_usuario"]}')
+        io.print_h2(f'Información personal: {estudiante["id_usuario"]}')
     print(f'Nombre y apellido: {estudiante["nombre"]} '
           f'{estudiante["apellido"]}')
     print(f'C.I.: {estudiante["ci"]}')
@@ -57,7 +55,7 @@ def get_personal_info(estudiante, title=True):
 def get_record(estudiante, title=True):
     """Consulta el record académico completo del estudiante."""
     if title:
-        print_h2(f'Récord académico: {estudiante["id_usuario"]}')
+        io.print_h2(f'Récord académico: {estudiante["id_usuario"]}')
     record = crud.read_records(estudiante['ci'])
     # Muestra la tabla
     print_record(record)
@@ -73,15 +71,15 @@ def get_record(estudiante, title=True):
 def find_grades(estudiante, title=True, intro=True):
     """Consulta las calificaciones por materia del estudiante."""
     if title:
-        print_h2(f'Consulta de calificaciones: {estudiante["id_usuario"]}')
+        io.print_h2(f'Consulta de calificaciones: {estudiante["id_usuario"]}')
     if intro:
-        print_long('Introduzca el código de una o varias materias para '
-                   'consultar sus calificaciones. El código de materia '
-                   'consiste de letras y números solamente, por ejemplo '
-                   'CAL114. Para buscar varias materias escriba '
-                   'sus códigos separados por espacios o comas.')
+        io.print_long('Introduzca el código de una o varias materias para '
+                      'consultar sus calificaciones. El código de materia '
+                      'consiste de letras y números solamente, por ejemplo '
+                      'CAL114. Para buscar varias materias escriba '
+                      'sus códigos separados por espacios o comas.')
     # Pide al usuario los códigos de materia y los separa en una lista
-    materia_ids = [materia.upper() for materia in input_list('Materia(s): ')]
+    materia_ids = [m.upper() for m in io.input_list('Materia(s): ')]
     # Muestra la tabla
     print_record(crud.read_records(estudiante['ci'], materia_ids))
 
@@ -89,7 +87,7 @@ def find_grades(estudiante, title=True, intro=True):
 def calculate_iaa(estudiante, title=True):
     """Calcula el índice académico acumulado (IAA) del estudiante."""
     if title:
-        print_h2(f'Índice Académico Acumulado: {estudiante["id_usuario"]}')
+        io.print_h2(f'Índice Académico Acumulado: {estudiante["id_usuario"]}')
     record = crud.read_records(estudiante['ci'])
     iaa = calculate_ia(record)
     print(f'Su IAA es de {iaa} según su récord académico completo.')
@@ -99,14 +97,14 @@ def calculate_iaa(estudiante, title=True):
 def calculate_iap(estudiante, title=True, intro=True):
     """Calcula el índice académico parcial (IAP) del estudiante por período."""
     if title:
-        print_h2(f'Índice Académico Parcial: {estudiante["id_usuario"]}')
+        io.print_h2(f'Índice Académico Parcial: {estudiante["id_usuario"]}')
     if intro:
-        print_long('El IAP es el índice académico calculado con las materias '
-                   'cursadas en un solo período académico. Introduzca el '
-                   'período académico para calcular su IAP (ejemplos: '
-                   '2020-01, 2018-IN, 2019-02).')
+        io.print_long('El IAP es el índice académico calculado con las '
+                      'materias cursadas en un solo período académico. '
+                      'Introduzca el período académico para calcular su '
+                      'IAP (ejemplos: 2020-01, 2018-IN, 2019-02).')
     # Pide al usuario el período académico límite
-    periodo = input_period('Período académico: ')
+    periodo = io.input_period('Período académico: ')
     # Filtrar record de materias
     record = [r for r in crud.read_records(estudiante['ci'])
               if r['periodo'] == periodo]
@@ -135,4 +133,4 @@ def print_record(record):
             'nota': 'Nota',
             'periodo': 'Período'}
     widths = dict(zip(cols.keys(), [10, 45, 5, 5, 10]))
-    print_table(record, cols, widths)
+    io.print_table(record, cols, widths)
