@@ -1,3 +1,4 @@
+import csv
 import re
 import textwrap
 from math import ceil
@@ -119,4 +120,14 @@ def input_period(prompt, pattern='^\d{4}-(01|IN|02)$', newline=True):
             print_error('Período académico inválido.')
             continue
         break
+    return result
+
+
+def read_csv(filename, delim=',', quote='"'):
+    """Extrae el contenido de un archivo CSV."""
+    result = []
+    with open(filename, newline='') as csvfile:
+        csv_reader = csv.reader(csvfile, delimiter=delim, quotechar=quote)
+        for row in csv_reader:
+            result.append(row)
     return result
