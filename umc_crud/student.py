@@ -13,6 +13,7 @@ def main(user_id):
             ['Salir']]
     while True:
         print()
+        io.print_hr()
         io.print_h1(f'Módulo de Estudiante')
         io.print_h2(user_id)
         # Mostrar las opciones del menú
@@ -22,6 +23,7 @@ def main(user_id):
         # Pedir al usuario que elija alguna opción entre 1 y n
         index = io.input_int(f'Elegir opción (1-{len(menu)}): ')
         if index in range(1, len(menu)):
+            io.print_hr()
             # Si la opción elegida está entre 1 y n-1,
             # ejecutar la función correspondiente
             func = menu[index-1][1]
