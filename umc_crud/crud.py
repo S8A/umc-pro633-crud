@@ -63,7 +63,7 @@ def find_student_by_ci(ci, test=False):
 
 
 def find_students(ci_list, test=False):
-    """Busca estudiantes por su número de cédula."""
+    """Consulta estudiantes por su número de cédula."""
     query = ('SELECT * FROM estudiante WHERE ci IN ('
              + ', '.join(['%s' for ci in ci_list]) + ')')
     return execute_sql(query, args=ci_list, test=test)
@@ -80,17 +80,27 @@ def read_career_info(carrera_id, test=False):
 # Tabla materia_carrera
 
 def find_career_subject(carrera_id, materia_id, test=False):
-    """Busca una materia en una carrera por su código"""
+    """Consulta una materia en una carrera por su código"""
     query = ('SELECT id_materia FROM materia_carrera '
              'WHERE id_carrera = %s AND id_materia = %s')
     return execute_sql(query, args=[carrera_id, materia_id], test=test)
 
 
 def find_career_subjects(carrera_id, materia_ids, test=False):
-    """Busca materias en una carrera por su código."""
+    """Consulta materias en una carrera por su código."""
     query = ('SELECT id_materia FROM materia_carrera WHERE id_carrera = %s '
              + 'AND id_materia IN ('
              + ', '.join(['%s' for materia in materia_ids]) + ')')
     args = [carrera_id]
     args.extend(materia_ids)
     return execute_sql(query, args, test=test)
+
+# Múltiples tablas
+
+def find_subjects_not_taken_by_student(ci_estudiante, test=False):
+    """Consulta materias que no han sido cursadas por el estudiante."""
+    query = ('SELECT id_materia FROM materia_carrera WHERE id_carrera = '
+             '(SELECT id_carrera FROM estudiante WHERE ci = %(ci)s) AND '
+             'id_materia NOT IN (SELECT id_materia FROM record '
+             'WHERE ci_estudiante = %(ci)s)')
+    return execute_sql(query, args={'ci': ci_estudiante}, test=test)
