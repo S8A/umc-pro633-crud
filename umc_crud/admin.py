@@ -193,9 +193,86 @@ def make_records(title=True, intro=True):
             print()
 
 
-def load_csv_records():
+def load_csv_records(title=True, intro=True):
     """Registra calificaciones de varios estudiantes a partir de un CSV."""
-    print('TODO: load_csv_records')
+    if title:
+        io.print_h2('Cargar archivo de calificaciones')
+    if intro:
+        io.print_long('Ingrese la ruta del archivo CSV con las '
+                      'califaciones que desea registrar. El archivo '
+                      'debe consistir de cuatro columnas: número de '
+                      'cédula del estudiante, código de materia, la '
+                      'calificación obtenida, y el período en que se '
+                      'cursó.')
+    # Pedir la ruta del archivo CSV
+    csv = input('Archivo: ')
+    try:
+        # Tratar de abrir el CSV y extraer su contenido
+        csv = io.read_csv(csv)
+    except FileNotFoundError:
+        # Si el archivo no se encuentra, mostrar error y salir
+        io.print_error('Archivo no encontrado.')
+        return
+    # Columnas de la tabla y sus cabeceras
+    cols = {'ci_estudiante': 'Cédula',
+            'id_materia': 'Materia',
+            'nota': 'Nota',
+            'periodo': 'Período'}
+    # Filtrar las filas que no tengan el número correcto de campos
+    csv = list(filter(lambda row: len(row) == 4, csv))
+    # Convertir el contenido del CSV al formato requerido por print_table
+    records = [dict(zip(cols.keys(), row)) for row in csv]
+    # Diccionario de datos a registrar
+    por_registrar = {}
+    # Para cada registro
+    for record in records:
+        ci = record['ci_estudiante']
+        materia_id = record['id_materia']
+        # Verificar que la calificación sea un número entero
+        try:
+            # Trata de convertir la calificación a entero
+            record['nota'] = int(record['nota'])
+        except ValueError:
+            # Si no se puede, el registro es inválido. Pasar al siguiente
+            continue
+        # Verificar que el período académico del registro sea válido
+        if not io.validate_period(record['periodo']):
+            # Si no es válido, pasar al siguiente registro
+            continue
+        # Buscar materias que no han sido cursadas por el estudiante de la
+        # cédula dada. Si no existe ningún estudiante con dicha cédula,
+        # el resultado será un tuple vacío
+        por_cursar = [item['id_materia'] for item
+                      in crud.find_subjects_not_taken_by_student(ci)]
+        if materia_id in por_cursar:
+            # Si la materia no ha sido cursada por el estudiante,
+            # se agregan los datos a la lista de registros por crear.
+            # Si esta combinación de materia y estudiante ya estaba en
+            # la lista, será reemplazada por este nuevo registro.
+            por_registrar[(ci, materia_id)] = record
+    # Convertir el diccionario de datos a lista
+    por_registrar = list(por_registrar.values())
+    print()
+    if por_registrar:
+        # Si hay datos por registrar, preguntar si quiere revisarlos
+        print(f'Se crearán {len(por_registrar)} nuevos registros.')
+        check = io.input_yes_no('¿Desea verlos antes de continuar? (s/n): ')
+        if check:
+            # Si la respuesta es afirmativa, mostrar la tabla
+            io.print_table(por_registrar, cols)
+        # Pedir confirmación antes de registrar los datos
+        confirm = io.input_yes_no('¿Registrar datos? (s/n): ')
+        if confirm:
+            # Si la respuesta es afirmativa, crear los registros
+            crud.create_records(por_registrar)
+            print('Datos registrados exitosamente.')
+        else:
+            # De lo contrario, mostrar mensaje
+            print('Registro cancelado.')
+    else:
+        # Si no hay datos por registrar, mostrar mensaje
+        print('No se registrarán datos.')
+    print()
 
 
 def update_record():
