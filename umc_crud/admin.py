@@ -139,17 +139,7 @@ def make_records(title=True, intro=True):
     else:
         # De lo contrario, para cada estudiante
         for estudiante in estudiantes:
-            # Mostrar el usuario y cédula del estudiante
-            io.print_h3(f'{estudiante["id_usuario"]} : {estudiante["ci"]}')
-            # Buscar las materias cursadas por el estudiante
-            cursadas = [r['id'] for r in crud.read_records(estudiante['ci'])]
-            # Pedir el período académico en el que se registrarán los datos
-            periodo = io.input_period('Período académico: ')
-            # Pedir las materias que se registrarán y buscarlas en la
-            # base de datos
-            materias = crud.find_career_subjects(
-                estudiante['id_carrera'],
-                [m.upper() for m in io.input_list('Materia(s): ')])
+            ci = estudiante['ci']
             # Columnas de la tabla y sus cabeceras
             cols = {'ci_estudiante': 'Cédula',
                     'id_materia': 'Materia',
@@ -157,26 +147,33 @@ def make_records(title=True, intro=True):
                     'periodo': 'Período'}
             # Lista de datos a registrar
             por_registrar = []
-            print('Calificaciones:')
-            # Para cada materia válida a registrar
-            for materia in materias:
-                # Código de la materia
-                materia_id = materia['id_materia']
-                if materia_id in cursadas:
-                    # Si la materia ya fue cursada, mostrar mensaje
-                    print(f'- {materia_id} ya tiene calificación.')
-                else:
-                    # Si no ha sido cursada, pedir su calificación
+            # Mostrar el usuario y cédula del estudiante
+            io.print_h3(f'{estudiante["id_usuario"]} : {estudiante["ci"]}')
+            # Buscar materias que no han sido cursadas por el estudiante
+            por_cursar = [item['id_materia'] for item
+                          in crud.find_subjects_not_taken_by_student(ci)]
+            # Pedir el período académico en el que se registrarán los datos
+            periodo = io.input_period('Período académico: ')
+            # Pedir las materias a registrar y conservar las que están en
+            # la lista de materias por cursar del estudiante
+            materias = [m.upper() for m in io.input_list('Materia(s): ')
+                        if m.upper() in por_cursar]
+            if materias:
+                # Si quedan materias por registrar
+                print('Calificaciones:')
+                # Para cada materia
+                for materia_id in materias:
+                    # Pedir la calificación obtenida por el estudiante
                     nota = io.input_int(f'- {materia_id}: ', newline=False)
-                    # Agregar datos de la materia a registrar a la lista
-                    por_registrar.append({'ci_estudiante': estudiante['ci'],
+                    # Agregar datos de la materia por registrar a la lista
+                    por_registrar.append({'ci_estudiante': ci,
                                           'id_materia': materia_id,
                                           'nota': nota,
                                           'periodo': periodo})
             print()
             if por_registrar:
                 # Si hay datos por registrar, mostrarlos en una tabla
-                print('Se registrarán los siguientes datos:')
+                print(f'Se crearán {len(por_registrar)} nuevos registros:')
                 io.print_table(por_registrar, cols)
                 # Pedir confirmación antes de registrar los datos
                 confirm = io.input_yes_no('¿Registrar datos? (s/n): ')
@@ -189,7 +186,7 @@ def make_records(title=True, intro=True):
                     print('Registro cancelado.')
             else:
                 # Si no hay datos por registrar, mostrar mensaje
-                print('No se registrarán datos.')
+                print('No se registrarán nuevos datos.')
             print()
 
 
@@ -239,8 +236,8 @@ def load_csv_records(title=True, intro=True):
         if not io.validate_period(record['periodo']):
             # Si no es válido, pasar al siguiente registro
             continue
-        # Buscar materias que no han sido cursadas por el estudiante de la
-        # cédula dada. Si no existe ningún estudiante con dicha cédula,
+        # Buscar las materias que no han sido cursadas por el estudiante de
+        # la cédula dada. Si no existe ningún estudiante con dicha cédula,
         # el resultado será un tuple vacío
         por_cursar = [item['id_materia'] for item
                       in crud.find_subjects_not_taken_by_student(ci)]
@@ -271,7 +268,7 @@ def load_csv_records(title=True, intro=True):
             print('Registro cancelado.')
     else:
         # Si no hay datos por registrar, mostrar mensaje
-        print('No se registrarán datos.')
+        print('No se registrarán nuevos datos.')
     print()
 
 
