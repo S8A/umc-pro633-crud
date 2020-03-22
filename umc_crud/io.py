@@ -1,6 +1,6 @@
 import csv
 import re
-import textwrap
+import textwrap as tw
 from math import ceil
 
 # Funciones auxiliares de entrada y salida
@@ -28,7 +28,7 @@ def print_h3(s, newline=True):
 
 def print_long(s, newline=True):
     """Muestra el texto dividido en varias líneas."""
-    for line in textwrap.wrap(s):
+    for line in tw.wrap(s):
         print(line)
     if newline:
         print()
@@ -54,14 +54,23 @@ def print_table(data, cols=None, widths=None, newline=True):
             # calcularlos a partir de los nombres de columna
             widths = {c: (4*ceil(len(cols[c])/4) + 4) for c in cols.keys()}
         # Mostrar cabecera de la tabla
-        print(' '.join([f'{cols[col] :<{w}}' for col, w in widths.items()]))
+        print(' '.join([f'{tw.shorten(str(cols[col]), width=w) :<{w}}'
+                        for col, w in widths.items()]))
         # Mostrar barra separadora decorativa
         print('+'.join(['-'*w for w in widths.values()]))
         # Mostrar datos de la tabla
         for row in data:
-            print(' '.join([f'{row[col] :<{w}}' for col, w in widths.items()]))
+            print(' '.join([f'{tw.shorten(str(row[col]), width=w) :<{w}}'
+                            for col, w in widths.items()]))
         if newline:
             print()
+
+
+def print_hr(symbol='-', width=80, newline=True):
+    """Muestra una línea horizontal."""
+    print(symbol*width)
+    if newline:
+        print()
 
 
 def input_list(prompt, separator='[,\s]+', newline=True):
@@ -87,7 +96,8 @@ def input_int(prompt, newline=True):
             result = int(user_input)
         except ValueError:
             # Si no se puede convertir, da error
-            print_error('Entrada inválida. Ingrese un número.', newline)
+            print_error('Entrada inválida. Ingrese un número entero.',
+                        newline)
             # Continúa el bucle para que pida la entrada de nuevo
             continue
         # Si llegó hasta aquí, la entrada es válida. Termina el ciclo
@@ -136,7 +146,7 @@ def input_period(prompt, newline=True):
             period = user_input
         else:
             # De lo contrario, se muestra un error
-            print_error('Período académico inválido.')
+            print_error('Período académico inválido.', newline)
             # Continúa el bucle para que pida la entrada de nuevo
             continue
         # Si llegó hasta aquí, la entrada es válida. Termina el ciclo
