@@ -12,7 +12,7 @@ def main(user_id):
             ['Consultar calificaciones por materia', find_grades]
         ],
         'Registro': [
-            ['Registrar calificaciones manualmente', make_records],
+            ['Registrar calificaciones', make_records],
             ['Cargar archivo de calificaciones', load_csv_records]
         ],
         'Modificación': [
@@ -124,7 +124,7 @@ def find_grades(title=True, intro=True):
 def make_records(title=True, intro=True):
     """Registra calificaciones de un estudiante sin cambiar las anteriores."""
     if title:
-        io.print_h2('Registrar calificaciones manualmente')
+        io.print_h2('Registrar calificaciones')
     if intro:
         io.print_long('Ingrese los números de cédula de los estudiantes, '
                       'las materias que quiere registrar para cada uno, '
@@ -149,7 +149,7 @@ def make_records(title=True, intro=True):
             por_registrar = []
             # Mostrar el usuario y cédula del estudiante
             print()
-            io.print_h3(f'{estudiante["id_usuario"]} : {estudiante["ci"]}')
+            io.print_h3(f'{estudiante["id_usuario"]} : {ci}')
             # Buscar materias que no han sido cursadas por el estudiante
             por_cursar = [item['id_materia'] for item
                           in crud.find_subjects_not_taken_by_student(ci)]
@@ -159,7 +159,7 @@ def make_records(title=True, intro=True):
                         if m.upper() in por_cursar]
             if materias:
                 # Si quedan materias por registrar
-                print('Calificaciones:')
+                print('Registro de calificaciones:')
                 # Para cada materia
                 for materia_id in materias:
                     # Pedir la calificación obtenida por el estudiante
@@ -274,9 +274,74 @@ def load_csv_records(title=True, intro=True):
     print()
 
 
-def update_records():
-    """Modifica calificaciones de uno o varios estudiantes."""
-    print('TODO: update_records')
+def update_records(title=True, intro=True):
+    """Modifica calificaciones existentes de uno o varios estudiantes."""
+    if title:
+        io.print_h2('Modificar calificaciones')
+    if intro:
+        io.print_long('Ingrese los números de cédula de los estudiantes, '
+                      'las materias que quiere modificar para cada uno, '
+                      'y la calificación y período académico que se le '
+                      'va a asignar a cada una.')
+    # Pedir los números de cédula y buscar los estudiantes asociados
+    estudiantes = crud.find_students(io.input_list('Cédula(s): '))
+    if not estudiantes:
+        # Si la lista de estudiantes está vacía, mostrar error
+        io.print_error('Los números de cédula ingresados no corresponden '
+                       'a ningún estudiante.')
+    else:
+        # De lo contrario, para cada estudiante
+        for estudiante in estudiantes:
+            ci = estudiante['ci']
+            # Columnas de la tabla y sus cabeceras
+            cols = {'ci_estudiante': 'Cédula',
+                    'id_materia': 'Materia',
+                    'nota': 'Nota',
+                    'periodo': 'Período'}
+            # Lista de datos a modificar
+            por_modificar = []
+            # Mostrar el usuario y cédula del estudiante
+            print()
+            io.print_h3(f'{estudiante["id_usuario"]} : {ci}')
+            # Extraer materias cursadas del récord académico del estudiante
+            cursadas = [item['id'] for item in crud.read_records(ci)]
+            # Pedir las materias a modificar y conservar las que están en
+            # la lista de materias cursadas del estudiante
+            materias = [m.upper() for m in io.input_list('Materia(s): ')
+                        if m.upper() in cursadas]
+            if materias:
+                # Si quedan materias por modificar
+                print('Modificación de calificaciones:')
+                # Para cada materia
+                for materia_id in materias:
+                    # Pedir la calificación obtenida por el estudiante
+                    nota = io.input_int(f'- {materia_id}: ', newline=False)
+                    # Pedir el período académico en el que se cursó
+                    periodo = io.input_period('  Período académico: ',
+                                              newline=False)
+                    # Agregar datos de la materia por modificar a la lista
+                    por_modificar.append({'ci_estudiante': ci,
+                                          'id_materia': materia_id,
+                                          'nota': nota,
+                                          'periodo': periodo})
+            if por_modificar:
+                # Si hay datos por modificar, mostrarlos en una tabla
+                print()
+                print(f'Se modificarán {len(por_modificar)} registros:')
+                io.print_table(por_modificar, cols)
+                # Pedir confirmación antes de modificar los datos
+                confirm = io.input_yes_no('¿Modificar datos? (s/n): ')
+                if confirm:
+                    # Si la respuesta es afirmativa, modificar los registros
+                    crud.update_records(por_modificar)
+                    print('Datos modificados exitosamente.')
+                else:
+                    # De lo contrario, mostrar mensaje
+                    print('Modificación cancelada.')
+            else:
+                # Si no hay datos por modificar, mostrar mensaje
+                print('No se registrarán nuevos datos.')
+            print()
 
 
 def delete_records():
