@@ -5,7 +5,7 @@ from .db import execute_sql
 # Tabla record
 
 def create_record(ci, materia_id, nota, periodo, test=False):
-    """Registra la calificación de un estudiante en una asignatura."""
+    """Registra la calificación de un estudiante en una materia."""
     query = 'INSERT INTO record VALUES (%s, %s, %s, %s)'
     return execute_sql(query, args=[ci, materia_id, nota, periodo], test=test)
 
@@ -36,16 +36,32 @@ def read_records(ci, materia_ids=None, test=False):
 
 
 def update_record(ci, materia_id, nota, periodo, test=False):
-    """Modifica la calificación de un estudiante en una asignatura."""
-    query = ('UPDATE record SET nota = %s, periodo = %s, '
+    """Modifica la calificación de un estudiante en una materia."""
+    query = ('UPDATE record SET nota = %s, periodo = %s '
              'WHERE ci_estudiante = %s AND id_materia = %s')
     return execute_sql(query, args=[nota, periodo, ci, materia_id])
 
 
+def update_records(record):
+    """Modifica las calificaciones de varias materias y estudiantes."""
+    query = ('UPDATE record SET nota = %s, periodo = %s '
+             'WHERE ci_estudiante = %s AND id_materia = %s')
+    args = [(r['nota'], r['periodo'], r['ci_estudiante'], r['id_materia'])
+            for r in record]
+    return execute_sql(query, args, many=True)
+
+
 def delete_record(ci, materia_id, test=False):
-    """Elimina la calificación de un estudiante en una asignatura."""
+    """Elimina la calificación de un estudiante en una materia."""
     query = 'DELETE FROM record WHERE ci_estudiante = %s AND id_materia = %s'
     return execute_sql(query, args=[ci, materia_id], test=test)
+
+
+def delete_records(record):
+    """Elimina las calificaciones de varias materias y estudiantes."""
+    query = 'DELETE FROM record WHERE ci_estudiante = %s AND id_materia = %s'
+    args = [(r['ci_estudiante'], r['id_materia']) for r in record]
+    return execute_sql(query, args, many=True)
 
 
 # Tabla estudiante
