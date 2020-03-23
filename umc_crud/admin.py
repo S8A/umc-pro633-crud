@@ -340,10 +340,71 @@ def update_records(title=True, intro=True):
                     print('Modificación cancelada.')
             else:
                 # Si no hay datos por modificar, mostrar mensaje
-                print('No se registrarán nuevos datos.')
+                print('No se modificará ningún dato.')
             print()
 
 
-def delete_records():
+def delete_records(title=True, intro=True):
     """Elimina calificaciones de uno o varios estudiantes."""
-    print('TODO: delete_records')
+    if title:
+        io.print_h2('Eliminar calificaciones')
+    if intro:
+        io.print_long('Ingrese los números de cédula de los estudiantes, '
+                      'y las materias que quiera eliminar de sus registros.')
+    # Pedir los números de cédula y buscar los estudiantes asociados
+    estudiantes = crud.find_students(io.input_list('Cédula(s): '))
+    if not estudiantes:
+        # Si la lista de estudiantes está vacía, mostrar error
+        io.print_error('Los números de cédula ingresados no corresponden '
+                       'a ningún estudiante.')
+    else:
+        # De lo contrario, para cada estudiante
+        for estudiante in estudiantes:
+            ci = estudiante['ci']
+            # Columnas de la tabla y sus cabeceras
+            cols = {'ci_estudiante': 'Cédula',
+                    'id_materia': 'Materia',
+                    'nota': 'Nota',
+                    'periodo': 'Período'}
+            # Lista de datos a eliminar
+            por_eliminar = []
+            # Mostrar el usuario y cédula del estudiante
+            print()
+            io.print_h3(f'{estudiante["id_usuario"]} : {ci}')
+            # Extraer materias cursadas del récord académico del estudiante
+            cursadas = {item['id']: item for item in crud.read_records(ci)}
+            # Pedir las materias a eliminar y conservar las que están en
+            # la lista de materias cursadas del estudiante
+            materias = [m.upper() for m in io.input_list('Materia(s): ')
+                        if m.upper() in cursadas.keys()]
+            if materias:
+                # Si quedan materias por eliminar
+                print('Eliminación de calificaciones:')
+                # Para cada materia
+                for materia_id in materias:
+                    # Extraer datos del registro
+                    nota = cursadas[materia_id]['nota']
+                    periodo = cursadas[materia_id]['periodo']
+                    # Agregar datos de la materia por eliminar a la lista
+                    por_eliminar.append({'ci_estudiante': ci,
+                                         'id_materia': materia_id,
+                                         'nota': nota,
+                                         'periodo': periodo})
+            if por_eliminar:
+                # Si hay datos por eliminar, mostrarlos en una tabla
+                print()
+                print(f'Se eliminarán {len(por_eliminar)} registros:')
+                io.print_table(por_eliminar, cols)
+                # Pedir confirmación antes de eliminar los datos
+                confirm = io.input_yes_no('¿Eliminar datos? (s/n): ')
+                if confirm:
+                    # Si la respuesta es afirmativa, eliminar los registros
+                    crud.delete_records(por_eliminar)
+                    print('Datos eliminados exitosamente.')
+                else:
+                    # De lo contrario, mostrar mensaje
+                    print('Eliminación cancelada.')
+            else:
+                # Si no hay datos por eliminar, mostrar mensaje
+                print('No se eliminará ningún dato.')
+            print()
