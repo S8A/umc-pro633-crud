@@ -11,6 +11,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Sistema CRUD de campus UMC.')
-    parser.add_argument('--config', action='store_true')
+    parser.add_argument('--config', action='store_true',
+                        help='Configura la conexión a MySQL')
     args = parser.parse_args()
     main(vars(args))
