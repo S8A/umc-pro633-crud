@@ -23,7 +23,8 @@ Luego, importe uno de los archivos del directorio `db` a su servidor MySQL para
 crear la base de datos. En dicho directorio se encuentran dos archivos: 
 `umc_db_structure.sql` y `umc_db.sql`.
 
-Para crear la base de datos con las tablas vacías, ejecute el siguiente comando reemplazando `user` y `database` por los valores apropiados:
+Para crear la base de datos con las tablas vacías, ejecute el siguiente comando 
+reemplazando `user` y `database` por los valores apropiados:
 
 ```bash
 mysql -u user -p database < db/umc_db_structure.sql
@@ -52,7 +53,19 @@ editar el archivo manualmente o ejecutar el programa con la opción `--config`:
 python3 -m umc_crud --config
 ```
 
+## Capturas de pantalla
+
+Configuración inicial:
+![Ventana mostrando la configuración inicial del programa](https://s8a.github.io/assets/img/umc-pro633-crud-first-config.png)
+
+Módulo de estudiante:
+![Ventana mostrando el módulo de estudiante con el usuario janedoe](https://s8a.github.io/assets/img/umc-pro633-crud-student-janedoe.png)
+![Ventana mostrando el módulo de estudiante con el usuario s8a](https://s8a.github.io/assets/img/umc-pro633-crud-student-s8a.png)
+
+Módulo de administrador:
+![Ventana mostrando el módulo de administrador con el usuario superman](https://s8a.github.io/assets/img/umc-pro633-crud-admin-superman.png)
+
 ## Licencia
 
 Este proyecto está licenciado bajo los términos de la 
-[Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/). 
+[Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/).
