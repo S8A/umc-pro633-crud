@@ -86,7 +86,8 @@ def input_list(prompt, separator='[,\s]+', newline=True):
 def input_int(prompt, newline=True):
     """Pide al usuario que ingrese un número entero y verifica la entrada."""
     result = None
-    while True:
+    # Mientras que no se haya obtenido el número
+    while result is None:
         # Toma la entrada del usuario
         user_input = input(prompt)
         if newline:
@@ -100,8 +101,35 @@ def input_int(prompt, newline=True):
                         newline)
             # Continúa el bucle para que pida la entrada de nuevo
             continue
-        # Si llegó hasta aquí, la entrada es válida. Termina el ciclo
-        break
+    # Devuelve el resultado
+    return result
+
+
+def input_int_range(prompt, min_value, max_value, newline=True):
+    """Pide al usuario que ingrese un número entero en un rango dado."""
+    result = None
+    # Mientras que no se haya obtenido el número
+    while result is None:
+        # Toma la entrada del usuario
+        user_input = input(prompt)
+        if newline:
+            print()
+        try:
+            # Intenta convertir la entrada a entero
+            result = int(user_input)
+        except ValueError:
+            # Si no se puede convertir, da error
+            print_error('Entrada inválida. Ingrese un número entero.',
+                        newline)
+            # Continúa el bucle para que pida la entrada de nuevo
+            continue
+        if result not in range(min_value, max_value + 1):
+            # Si el número no se encuentra en el rango, da error
+            print_error(f'El número ingresado no está en el intervalo '
+                        f'[{min_value}, {max_value}]',
+                        newline)
+            # Eliminar el número para que pida la entrada de nuevo
+            result = None
     # Devuelve el resultado
     return result
 
@@ -109,7 +137,7 @@ def input_int(prompt, newline=True):
 def input_yes_no(prompt, yes='^[Ss]$', no='^[Nn]$', newline=True):
     """Pide al usuario que ingrese sí o no a la pregunta que se le hace."""
     answer = None
-    while True:
+    while answer is None:
         # Toma la entrada del usuario y quita espacios extra alrededor
         user_input = input(prompt).strip()
         if newline:
@@ -125,10 +153,6 @@ def input_yes_no(prompt, yes='^[Ss]$', no='^[Nn]$', newline=True):
             # muestra mensaje de error
             print_error('Entrada inválida. Ingrese sí o no como se indica.',
                         newline)
-            # Continúa el bucle para que pida la entrada de nuevo
-            continue
-        # Si llegó hasta aquí, la entrada es válida. Termina el ciclo
-        break
     # Devuelve la respuesta
     return answer
 
@@ -136,7 +160,7 @@ def input_yes_no(prompt, yes='^[Ss]$', no='^[Nn]$', newline=True):
 def input_period(prompt, newline=True):
     """Pide al usuario que ingrese un período académico válido."""
     period = None
-    while True:
+    while period is None:
         # Toma la entrada del usuario en mayúsculas y quita espacios alrededor
         user_input = input(prompt).upper().strip()
         if newline:
@@ -147,10 +171,6 @@ def input_period(prompt, newline=True):
         else:
             # De lo contrario, se muestra un error
             print_error('Período académico inválido.', newline)
-            # Continúa el bucle para que pida la entrada de nuevo
-            continue
-        # Si llegó hasta aquí, la entrada es válida. Termina el ciclo
-        break
     # Devuelve el período académico ingresado
     return period
 
