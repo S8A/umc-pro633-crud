@@ -38,6 +38,9 @@ def is_configured():
     """Verifica si el archivo de configuración existe y está completo."""
     # Trata de cargar la configuración
     conf = read_config()
+    # Comprobar que la sección 'mysql' existe
+    if not conf.has_section('mysql'):
+        return False
     # Lista de atributos de la configuración MySQL
     options = ['host', 'user', 'password', 'database']
     # Comprobar que todos los atributos existen y tienen valor
