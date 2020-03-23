@@ -1,5 +1,6 @@
 from . import crud, io, student
 
+# Módulo de administrador
 
 def main(user_id):
     """Función principal del módulo de administrador."""
@@ -38,20 +39,19 @@ def main(user_id):
                 print(f'{len(menu)}. {item[0]}')
         print()
         # Pedir al usuario que elija alguna opción entre 1 y n
-        index = io.input_int(f'Elegir opción (1-{len(menu)}): ')
-        if index in range(1, len(menu)):
-            io.print_hr()
+        n = len(menu)
+        index = io.input_int_range(f'Elegir opción [1-{n}]: ', 1, n)
+        if index in range(1, n):
             # Si la opción elegida está entre 1 y n-1,
             # ejecutar la función correspondiente
+            io.print_hr()
             func = menu[index-1][1]
             func()
-            cont = input('[Enter] para volver al menu principal... ')
-        elif index == len(menu):
+            cont = input('[Enter] para volver al menú principal... ')
+        elif index == n:
             # Si se elige la última opción, salir
             print('Saliendo.')
-            break
-        else:
-            io.print_error('Opción inválida. Intente de nuevo.')
+            return
 
 
 def get_personal_info(title=True, intro=True):
