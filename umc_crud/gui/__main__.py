@@ -22,17 +22,24 @@ class MainController:
         if not is_configured():
             QApplication.instance().exit()
         self.login = login.LoginDialog()
-        self.login.admin_login.connect(self.show_admin_window)
-        self.login.student_login.connect(self.show_student_window)
+        self.login.user_login.connect(self.show_main_window)
         self.login.show()
 
-    def show_student_window(self):
+    def show_main_window(self, user_id, user_admin):
+        if user_admin:
+            self.show_admin_window(user_id)
+        else:
+            self.show_student_window(user_id)
+
+    def show_student_window(self, user_id):
         """Muestra la ventana del módulo de estudiante."""
         print('TODO: show_student_window')
+        print(user_id)
 
-    def show_admin_window(self):
+    def show_admin_window(self, user_id):
         """Muesta la ventana del módulo de administrador."""
         print('TODO: show_admin_window')
+        print(user_id)
 
 
 def main(args):

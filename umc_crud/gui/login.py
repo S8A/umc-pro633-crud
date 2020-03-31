@@ -2,10 +2,10 @@ from .. import db
 import PyQt5.QtCore as qtc
 import PyQt5.QtWidgets as qtw
 
+
 class LoginDialog(qtw.QDialog):
     """Diálogo de inicio de sesión."""
-    admin_login = qtc.pyqtSignal()
-    student_login = qtc.pyqtSignal()
+    user_login = qtc.pyqtSignal(str, bool)
 
     def __init__(self, parent=None):
         """Inicialización."""
@@ -48,11 +48,8 @@ class LoginDialog(qtw.QDialog):
         if result is not None:
             # Si los datos coinciden con un usuario, se verifica si es
             # un administrador o un estudiante y se emite la señal apropiada
-            if result['admin'] == 0:
-                self.student_login.emit()
-                self.accept()
-            elif result['admin'] == 1:
-                self.admin_login.emit()
+            if result['admin'] in [0, 1]:
+                self.user_login.emit(result['id'], result['admin'])
                 self.accept()
             else:
                 error_msg = qtw.QErrorMessage(self)
