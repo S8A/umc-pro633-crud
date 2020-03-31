@@ -3,28 +3,35 @@ import configparser
 
 # Módulo de configuración
 
-def config():
-    """Crea un nuevo archivo de configuración."""
-    io.print_h1('Configuración')
-    io.print_h2('MySQL')
-    io.print_long('Parámetros de la conexión a la base de datos donde se '
-                  'encuentran las tablas requeridas por el sistema CRUD. '
-                  'Leer README.md para instrucciones de cómo importar la '
-                  'estructura de la base de datos.')
-    host = input('Host: ')
-    user = input('Usuario: ')
-    password = input('Contraseña: ')
-    database = input('Base de datos: ')
-    conf = configparser.ConfigParser()
-    conf['mysql'] = {'host': host,
-                     'user': user,
-                     'password': password,
-                     'database': database}
-    with open('config/config.ini', 'w') as configfile:
-        conf.write(configfile)
+def config(title=True, intro=True):
+    """Configura el programa a partir de la entrada del usuario."""
+    if title:
+        io.print_h1('Configuración')
+    if intro:
+        io.print_h2('MySQL')
+        io.print_long('Parámetros de la conexión a la base de datos donde se '
+                      'encuentran las tablas requeridas por el sistema CRUD. '
+                      'Leer README.md para instrucciones de cómo importar la '
+                      'estructura de la base de datos.')
+    host = input('Host: ').strip()
+    user = input('Usuario: ').strip()
+    password = input('Contraseña: ').strip()
+    database = input('Base de datos: ').strip()
+    create_config({'host': host,
+                   'user': user,
+                   'password': password,
+                   'database': database})
     print()
     print('Configuración completada. Ejecute el programa de nuevo.')
     print()
+
+
+def create_config(mysql_data):
+    """Crea un nuevo archivo de configuración."""
+    conf = configparser.ConfigParser()
+    conf['mysql'] = mysql_data
+    with open('config/config.ini', 'w') as configfile:
+        conf.write(configfile)
 
 
 def read_config():
