@@ -17,7 +17,7 @@ def create_records(record):
     return execute_sql(query, args, many=True)
 
 
-def read_records(ci, materia_ids=None, test=False):
+def read_records(ci, materia_ids=None, periodo=None, test=False):
     """Consulta las calificaciones de un estudiante."""
     query = ('SELECT materia.id, materia.nombre, materia.uc, '
              'record.nota, record.periodo '
@@ -31,6 +31,10 @@ def read_records(ci, materia_ids=None, test=False):
                   + ', '.join(['%s' for m in materia_ids])
                   + ')')
         args.extend(materia_ids)
+    if periodo is not None:
+        # Toma en cuenta solo el período indicado, si se provee
+        query += ' AND record.periodo = %s'
+        args.append(periodo)
     query += ' ORDER BY record.periodo'
     return execute_sql(query, args, test=test)
 
