@@ -44,7 +44,7 @@ class MainController:
 
 def main(args):
     """Función principal del programa."""
-    app = QApplication([])
+    app = QApplication(sys.argv)
     control = MainController()
     if args['config'] or not is_configured():
         control.show_config_window()
