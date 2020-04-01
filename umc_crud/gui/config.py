@@ -26,7 +26,10 @@ class ConfigDialog(qtw.QDialog):
                             'password': ['Contraseña'],
                             'database': ['Base de datos']}
         for key, content in self.form_inputs.items():
-            self.form_inputs[key].append(qtw.QLineEdit())
+            line_edit = qtw.QLineEdit()
+            if key == 'password':
+                line_edit.setEchoMode(qtw.QLineEdit.Password)
+            self.form_inputs[key].append(line_edit)
         for label, text_input in self.form_inputs.values():
             form_layout.addRow(label, text_input)
         vbox_layout.addLayout(form_layout)

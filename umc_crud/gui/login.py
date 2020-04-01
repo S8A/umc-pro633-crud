@@ -26,6 +26,7 @@ class LoginDialog(qtw.QDialog):
         self.user_id = qtw.QLineEdit()
         form_layout.addRow('Usuario', self.user_id)
         self.user_pw = qtw.QLineEdit()
+        self.user_pw.setEchoMode(qtw.QLineEdit.Password)
         form_layout.addRow('Contraseña', self.user_pw)
         vbox_layout.addLayout(form_layout)
         # Botones
