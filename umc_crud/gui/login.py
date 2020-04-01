@@ -1,4 +1,5 @@
 from .. import db
+from . import utils
 import PyQt5.QtCore as qtc
 import PyQt5.QtWidgets as qtw
 
@@ -18,7 +19,7 @@ class LoginDialog(qtw.QDialog):
         # Estructura principal
         vbox_layout = qtw.QVBoxLayout()
         # Título
-        title_label = qtw.QLabel('Inicio de Sesión')
+        title_label = utils.create_label_h1('Inicio de Sesión')
         vbox_layout.addWidget(title_label)
         # Formulario
         form_layout = qtw.QFormLayout()
@@ -35,6 +36,7 @@ class LoginDialog(qtw.QDialog):
         buttons.rejected.connect(self.reject)
         vbox_layout.addWidget(buttons)
         self.setLayout(vbox_layout)
+        self.setMinimumSize(400, 300)
 
     def _login(self):
         """Intenta iniciar sesión con los datos ingresados."""

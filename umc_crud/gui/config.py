@@ -1,4 +1,5 @@
 from ..config import create_config
+from . import utils
 import PyQt5.QtWidgets as qtw
 
 
@@ -16,7 +17,7 @@ class ConfigDialog(qtw.QDialog):
         # Estructura principal
         vbox_layout = qtw.QVBoxLayout()
         # Título
-        title_label = qtw.QLabel('Configuración de MySQL')
+        title_label = utils.create_label_h1('Configuración de MySQL')
         vbox_layout.addWidget(title_label)
         # Formulario
         form_layout = qtw.QFormLayout()
@@ -37,6 +38,7 @@ class ConfigDialog(qtw.QDialog):
         buttons.rejected.connect(self.reject)
         vbox_layout.addWidget(buttons)
         self.setLayout(vbox_layout)
+        self.setMinimumSize(400, 300)
 
     def _save_config(self):
         """Guarda la configuración ingresada."""
