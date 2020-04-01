@@ -1,5 +1,6 @@
 from .. import crud
-from ..student import calculate_ia, print_record
+from ..io import split_list, validate_period
+from ..student import calculate_ia
 from . import utils
 import PyQt5.QtCore as qtc
 import PyQt5.QtWidgets as qtw
@@ -79,7 +80,7 @@ class MainWindow(qtw.QMainWindow):
         # Crea una interfaz de consulta de récord académico para
         # un solo estudiante
         self.setCentralWidget(StudentRecordWidget(student=self.estudiante))
-        self.resize(500, 500)
+        self.resize(700, 600)
 
 
 class StudentRecordWidget(qtw.QWidget):
@@ -90,7 +91,9 @@ class StudentRecordWidget(qtw.QWidget):
         super().__init__()
         self.record = {}
         if student is not None:
-            self.single = True
+            # Si se inicializa con un estudiante, se establece el modo
+            # de estudiante único para desactivar la búsqueda por cédula
+            self.single_mode = True
             self.estudiante = student
         self._create_ui()
         self._find_record()
@@ -104,9 +107,9 @@ class StudentRecordWidget(qtw.QWidget):
         main_layout.addWidget(utils.create_label_h1('Récord académico'))
         # Formulario de búsqueda
         form_layout = qtw.QFormLayout()
-        if not self.single:
+        if not self.single_mode:
             self.estudiante_input = qtw.QLineEdit()
-            form_layout.addRow('Estudiante', self.estudiante_input)
+            form_layout.addRow('Estudiante (C.I.)', self.estudiante_input)
         self.materias_input = qtw.QLineEdit()
         form_layout.addRow('Materias', self.materias_input)
         self.periodo_input = qtw.QLineEdit()
@@ -119,19 +122,67 @@ class StudentRecordWidget(qtw.QWidget):
         # TODO: Convertir la tabla a QTableView
         self.record_tbl = qtw.QTextEdit()
         self.record_tbl.setReadOnly(True)
+        self.record_tbl.setFontFamily('monospace')
         main_layout.addWidget(self.record_tbl, stretch=2)
         # Información adicional
-        uc_cursadas = [r['uc'] for r in self.record]
-        main_layout.addWidget(utils.create_label(
-            f'Materias cursadas: {len(uc_cursadas)} ({sum(uc_cursadas)} UC)'))
-        uc_aprobadas = [r['uc'] for r in self.record if r['nota'] >= 12]
-        main_layout.addWidget(utils.create_label(
-            f'Materias aprobadas: {len(uc_aprobadas)} '
-            f'({sum(uc_aprobadas)} UC)'))
-        main_layout.addWidget(utils.create_label(
-            f'Índice Académico Acumulado (IAA): {calculate_ia(self.record)}'))
+        self.uc_cursadas = utils.create_label('')
+        main_layout.addWidget(self.uc_cursadas)
+        self.uc_aprobadas = utils.create_label('')
+        main_layout.addWidget(self.uc_aprobadas)
+        self.indice_academico = utils.create_label('')
+        main_layout.addWidget(self.indice_academico)
         self.setLayout(main_layout)
 
     def _find_record(self):
         """Consulta el récord académico con los datos ingresados."""
-        print('TODO: _find_record')
+        if not self.single_mode:
+            # Si no está activado el modo de estudiante único,
+            # extraer la cédula ingresada
+            ci = self.estudiante_input.text().strip()
+            # Buscar el estudiante por su cédula
+            self.estudiante = crud.find_student_by_ci(ci)
+            # Si no se encuentra el estudiante, mostrar error
+            if not self.estudiante:
+                error_msg = qtw.QErrorMessage(self)
+                error_msg.setModal(True)
+                error_msg.showMessage('Estudiante no encontrado.')
+                return
+        # Extraer las materias ingresadas
+        materia_ids = split_list(self.materias_input.text().strip())
+        # Filtrar elementos vacíos
+        materia_ids = [m for m in materia_ids if m]
+        if not materia_ids:
+            materia_ids = None
+        # Extraer y comprobar el período ingresado
+        periodo = self.periodo_input.text().upper().strip()
+        if not validate_period(periodo):
+            periodo = None
+        # Buscar el récord académico con los datos obtenidos
+        self.record = crud.read_records(self.estudiante['ci'],
+                                        materia_ids,
+                                        periodo)
+        # Mostrar el récord académico en la tabla
+        self.record_tbl.setText(utils.create_text_record(self.record))
+        # Actualiza la información adicional
+        self._update_record_info()
+
+    def _update_record_info(self):
+        """Actualiza la información adicional del récord académico."""
+        # Extrae las UC de las materias cursadas
+        uc_cursadas = [r['uc'] for r in self.record]
+        # Muestra el número de materias cursadas y su total de UC
+        self.uc_cursadas.setText(
+            f'Materias cursadas: {len(uc_cursadas)} ({sum(uc_cursadas)} UC)')
+        # Extrae las UC de las materias aprobadas
+        uc_aprobadas = [r['uc'] for r in self.record if r['nota'] >= 12]
+        # Muestra el número de materias aprobadas y su total de UC
+        self.uc_aprobadas.setText(
+            f'Materias aprobadas: {len(uc_aprobadas)} '
+            f'({sum(uc_aprobadas)} UC)')
+        # Muestra el índice académico del registro dado
+        self.indice_academico.setText(
+            f'Índice Académico (IA): {calculate_ia(self.record) or "N/A"}')
+        # Ajusta el tamaño del texto
+        self.uc_cursadas.adjustSize()
+        self.uc_aprobadas.adjustSize()
+        self.indice_academico.adjustSize()
