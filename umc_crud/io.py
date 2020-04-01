@@ -76,7 +76,7 @@ def print_hr(symbol='-', width=80, newline=True):
 def input_list(prompt, separator='[,\s]+', newline=True):
     """Pide al usuario que ingrese uno o varios ítems y extrae los datos."""
     # Toma la entrada del usuario y la separa por el patrón dado
-    items = re.split(separator, input(prompt))
+    items = split_list(input(prompt), separator)
     if newline:
         print()
     # Devuelve los ítems ingresados
@@ -192,3 +192,8 @@ def read_csv(filename, delim=',', quote='"'):
 def validate_period(user_input, pattern='^\d{4}-(01|IN|02)$'):
     """Verifica si la entrada corresponde con un período académico."""
     return re.match(pattern, user_input)
+
+
+def split_list(s, separator='[,\s]+'):
+    """Separa el texto según el patrón dado."""
+    return re.split(separator, s)
