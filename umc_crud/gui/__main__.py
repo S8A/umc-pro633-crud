@@ -1,5 +1,5 @@
 from ..config import is_configured
-from . import config, login
+from . import config, login, student
 from PyQt5.QtWidgets import QApplication
 import argparse, sys
 
@@ -33,8 +33,8 @@ class MainController:
 
     def show_student_window(self, user_id):
         """Muestra la ventana del módulo de estudiante."""
-        print('TODO: show_student_window')
-        print(user_id)
+        self.student_window = student.MainWindow(user_id)
+        self.student_window.show()
 
     def show_admin_window(self, user_id):
         """Muesta la ventana del módulo de administrador."""
