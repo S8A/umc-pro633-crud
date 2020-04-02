@@ -162,9 +162,7 @@ class StudentRecordWidget(qtw.QWidget):
             self.estudiante = crud.find_student_by_ci(ci)
             # Si no se encuentra el estudiante, mostrar error
             if not self.estudiante:
-                error_msg = qtw.QErrorMessage(self)
-                error_msg.setModal(True)
-                error_msg.showMessage('Estudiante no encontrado.')
+                utils.show_error_message('Estudiante no encontrado.', self)
                 return
         # Extraer las materias ingresadas
         materia_ids = split_list(self.materias_input.text().strip())
@@ -174,8 +172,14 @@ class StudentRecordWidget(qtw.QWidget):
             materia_ids = None
         # Extraer y comprobar el período ingresado
         periodo = self.periodo_input.text().upper().strip()
-        if not validate_period(periodo):
+        if not periodo:
             periodo = None
+        elif not validate_period(periodo):
+            utils.show_error_message(
+                ('Ingrese un período académico válido. '
+                 'Ejemplos: 2018-02, 2019-IN, 2020-01'),
+                self)
+            return
         # Buscar el récord académico con los datos obtenidos
         self.record = crud.read_records(self.estudiante['ci'],
                                         materia_ids,
