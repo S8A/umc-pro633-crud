@@ -18,3 +18,8 @@ def create_label_h2(s, wrap=True):
 def create_label_h3(s, wrap=True):
     """Crea un encabezado de tercer nivel."""
     return create_label(f'<h3>{s}</h3>', wrap)
+
+def show_error_message(s, parent):
+    error_msg = qtw.QErrorMessage(parent)
+    error_msg.setModal(True)
+    error_msg.showMessage(s)
