@@ -65,13 +65,14 @@ class StudentInfoWidget(qtw.QWidget):
     def __init__(self, student=None, parent=None):
         """Inicializa la interfaz de consulta de información personal."""
         super().__init__(parent)
-        if student is not None:
-            # Si se inicializa con un estudiante, se establece el modo
-            # de estudiante único para desactivar la búsqueda por cédula
-            self.single_mode = True
-            self.estudiante = student
+        # Si se inicializa con un estudiante, se establece el modo
+        # de estudiante único para desactivar la búsqueda por cédula
+        self.estudiante = student
+        self.single_mode = self.estudiante is not None
+        # Inicializa la interfaz gráfica
         self._create_ui()
-        self._get_personal_info()
+        if self.single_mode:
+            self._get_personal_info()
 
     def _create_ui(self):
         """Crea la interfaz gráfica del componente."""
@@ -104,6 +105,10 @@ class StudentInfoWidget(qtw.QWidget):
             # Si no está activado el modo de estudiante único,
             # extraer la cédula ingresada
             ci = self.estudiante_input.text().strip()
+            # Si no se ingresó ninguna cédula, mostrar error
+            if not ci:
+                utils.show_error_message('Ingrese un número de cédula.', self)
+                return
             # Buscar el estudiante por su cédula
             self.estudiante = crud.find_student_by_ci(ci)
             # Si no se encuentra el estudiante, mostrar error
@@ -130,14 +135,16 @@ class StudentRecordWidget(qtw.QWidget):
     def __init__(self, student=None, parent=None):
         """Inicializa la interfaz de consulta de récord académico."""
         super().__init__(parent)
+        # Si se inicializa con un estudiante, se establece el modo
+        # de estudiante único para desactivar la búsqueda por cédula
+        self.estudiante = student
+        self.single_mode = self.estudiante is not None
+        # Récord académico
         self.record = {}
-        if student is not None:
-            # Si se inicializa con un estudiante, se establece el modo
-            # de estudiante único para desactivar la búsqueda por cédula
-            self.single_mode = True
-            self.estudiante = student
+        # Inicializa la interfaz gráfica
         self._create_ui()
-        self._get_record()
+        if self.single_mode:
+            self._get_record()
 
     def _create_ui(self):
         """Crea la interfaz gráfica del componente."""
@@ -186,11 +193,11 @@ class StudentRecordWidget(qtw.QWidget):
             self.record_tbl_header.setSectionResizeMode(i, resize_mode)
         main_layout.addWidget(self.record_tbl, stretch=2)
         # Información adicional
-        self.uc_cursadas = utils.create_label('')
+        self.uc_cursadas = utils.create_label('Materias cursadas:')
         main_layout.addWidget(self.uc_cursadas)
-        self.uc_aprobadas = utils.create_label('')
+        self.uc_aprobadas = utils.create_label('Materias aprobadas:')
         main_layout.addWidget(self.uc_aprobadas)
-        self.indice_academico = utils.create_label('')
+        self.indice_academico = utils.create_label('Índice Académico (IA):')
         main_layout.addWidget(self.indice_academico)
         self.setLayout(main_layout)
 
@@ -200,6 +207,10 @@ class StudentRecordWidget(qtw.QWidget):
             # Si no está activado el modo de estudiante único,
             # extraer la cédula ingresada
             ci = self.estudiante_input.text().strip()
+            # Si no se ingresó ninguna cédula, mostrar error
+            if not ci:
+                utils.show_error_message('Ingrese un número de cédula.', self)
+                return
             # Buscar el estudiante por su cédula
             self.estudiante = crud.find_student_by_ci(ci)
             # Si no se encuentra el estudiante, mostrar error
