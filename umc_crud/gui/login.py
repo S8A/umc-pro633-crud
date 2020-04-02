@@ -1,7 +1,7 @@
-from .. import db
-from . import utils
 import PyQt5.QtCore as qtc
 import PyQt5.QtWidgets as qtw
+from .. import db
+from . import utils
 
 
 class LoginDialog(qtw.QDialog):
@@ -9,7 +9,7 @@ class LoginDialog(qtw.QDialog):
     user_login = qtc.pyqtSignal(str, bool)
 
     def __init__(self, parent=None):
-        """Inicialización."""
+        """Inicializa el diálogo de inicio de sesión y su interfaz gráfica."""
         super().__init__(parent)
         self.setWindowTitle('Inicio de Sesión - UMC Campus CRUD')
         self._create_ui()

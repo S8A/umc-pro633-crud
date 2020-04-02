@@ -1,16 +1,16 @@
+import PyQt5.QtCore as qtc
+import PyQt5.QtWidgets as qtw
 from .. import crud
 from ..io import split_list, validate_period
 from ..student import calculate_ia
 from . import utils
-import PyQt5.QtCore as qtc
-import PyQt5.QtWidgets as qtw
 
 
 class MainWindow(qtw.QMainWindow):
     """Ventana principal del módulo de estudiante."""
 
     def __init__(self, user_id, parent=None):
-        """Inicialización."""
+        """Inicializa el módulo de estudiante con el usuario dado."""
         super().__init__(parent)
         self.estudiante = crud.find_student_by_username(user_id)
         self.setWindowTitle(
@@ -32,10 +32,10 @@ class MainWindow(qtw.QMainWindow):
         main_toolbar.setMovable(False)
         main_toolbar.setFloatable(False)
         # Lista de opciones con sus funciones asociadas
-        self.options = [['Consultar información personal',
-                         self._get_personal_info],
-                        ['Consultar récord académico',
-                         self._get_record]]
+        self.options = [
+            ['Consultar información personal', self._get_personal_info],
+            ['Consultar récord académico', self._get_record],
+        ]
         # Selector de opciones
         combo = qtw.QComboBox()
         combo.setSizeAdjustPolicy(qtw.QComboBox.AdjustToContents)
@@ -49,7 +49,7 @@ class MainWindow(qtw.QMainWindow):
         self.options[index][1]()
 
     def _get_personal_info(self):
-        """Consulta la información personal del estudiante."""
+        """Crea la interfaz de consulta de información personal."""
         # Estructura
         widget = qtw.QWidget()
         layout = qtw.QVBoxLayout()
@@ -76,9 +76,7 @@ class MainWindow(qtw.QMainWindow):
         self.resize(400, 300)
 
     def _get_record(self):
-        """Consulta el récord académico del estudiante."""
-        # Crea una interfaz de consulta de récord académico para
-        # un solo estudiante
+        """Crea la interfaz de consulta del récord académico."""
         self.setCentralWidget(StudentRecordWidget(student=self.estudiante))
         self.resize(700, 600)
 
@@ -87,7 +85,7 @@ class StudentRecordWidget(qtw.QWidget):
     """Interfaz de consulta de récord académico."""
 
     def __init__(self, student=None, parent=None):
-        """Inicialización."""
+        """Inicializa la interfaz de consulta de récord académico."""
         super().__init__(parent)
         self.record = {}
         if student is not None:
@@ -209,7 +207,7 @@ class RecordTableModel(qtc.QAbstractTableModel):
     """Modelo interno para tablas de récords académicos."""
 
     def __init__(self, record, header, parent=None):
-        """Inicialización"""
+        """Inicializa el modelo de tabla con el récord y cabecera dados."""
         super().__init__(parent)
         self.record = record
         self.header = header

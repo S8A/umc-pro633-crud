@@ -1,13 +1,13 @@
+import PyQt5.QtWidgets as qtw
 from ..config import create_config
 from . import utils
-import PyQt5.QtWidgets as qtw
 
 
 class ConfigDialog(qtw.QDialog):
     """Diálogo de configuración del programa."""
 
     def __init__(self, parent=None):
-        """Inicialización."""
+        """Inicializa el diálogo de configuración y su interfaz gráfica."""
         super().__init__(parent)
         self.setWindowTitle('Configuración - UMC Campus CRUD')
         self._create_ui()

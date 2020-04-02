@@ -1,14 +1,14 @@
+import argparse
+import sys
+from PyQt5.QtWidgets import QApplication
 from ..config import is_configured
 from . import config, login, student
-from PyQt5.QtWidgets import QApplication
-import argparse, sys
 
 
 class MainController:
     """Controla el flujo del programa."""
 
     def __init__(self):
-        """Inicialización."""
         pass
 
     def show_config_window(self):
