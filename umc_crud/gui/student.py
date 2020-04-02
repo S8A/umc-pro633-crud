@@ -50,35 +50,78 @@ class MainWindow(qtw.QMainWindow):
 
     def _get_personal_info(self):
         """Crea la interfaz de consulta de información personal."""
-        # Estructura
-        widget = qtw.QWidget()
-        layout = qtw.QVBoxLayout()
-        # Cabecera
-        layout.addWidget(utils.create_label_h1('Información personal'))
-        # Contenido
-        layout.addWidget(utils.create_label(
-            f'<b>Nombre y apellido:</b> {self.estudiante["nombre"]} '
-            f'{self.estudiante["apellido"]}'))
-        layout.addWidget(utils.create_label(
-            f'<b>C.I.:</b> {self.estudiante["ci"]}'))
-        layout.addWidget(utils.create_label(
-            f'<b>Teléfono:</b> {self.estudiante["telefono"]}'))
-        layout.addWidget(utils.create_label(
-            f'<b>Dirección:</b> {self.estudiante["direccion"]}'))
-        carrera = crud.read_career_info(self.estudiante['id_carrera'])
-        layout.addWidget(utils.create_label(
-            f'<b>Carrera:</b> {carrera["nombre"]} ({carrera["id"]})'))
-        mencion = carrera["mencion"]
-        if mencion is not None:
-            layout.addWidget(qtw.QLabel(f'<b>Mención:</b> {mencion}'))
-        widget.setLayout(layout)
-        self.setCentralWidget(widget)
+        self.setCentralWidget(StudentInfoWidget(student=self.estudiante))
         self.resize(400, 300)
 
     def _get_record(self):
         """Crea la interfaz de consulta del récord académico."""
         self.setCentralWidget(StudentRecordWidget(student=self.estudiante))
         self.resize(700, 600)
+
+
+class StudentInfoWidget(qtw.QWidget):
+    """Interfaz de consulta de información personal."""
+
+    def __init__(self, student=None, parent=None):
+        """Inicializa la interfaz de consulta de información personal."""
+        super().__init__(parent)
+        if student is not None:
+            # Si se inicializa con un estudiante, se establece el modo
+            # de estudiante único para desactivar la búsqueda por cédula
+            self.single_mode = True
+            self.estudiante = student
+        self._create_ui()
+        self._get_personal_info()
+
+    def _create_ui(self):
+        """Crea la interfaz gráfica del componente."""
+        # Estructura
+        layout = qtw.QVBoxLayout()
+        # Cabecera
+        layout.addWidget(utils.create_label_h1('Información personal'))
+        # Formulario de búsqueda (no aplica en modo de estudiante único)
+        if not self.single_mode:
+            form_layout = qtw.QFormLayout()
+            # Campo de cédula del estudiante, si el modo de estudiante
+            # único no aplica
+            self.estudiante_input = qtw.QLineEdit()
+            form_layout.addRow('Estudiante (C.I.)', self.estudiante_input)
+            layout.addLayout(form_layout)
+            # Botón de consulta
+            consultar_btn = qtw.QPushButton('Consultar')
+            consultar_btn.clicked.connect(self._get_personal_info)
+            layout.addWidget(consultar_btn)
+        # Contenido
+        self.output_text = qtw.QTextEdit()
+        self.output_text.setReadOnly(True)
+        layout.addWidget(self.output_text, stretch=1)
+        self.setLayout(layout)
+
+    def _get_personal_info(self):
+        """Consulta la información personal del estudiante dato."""
+        output = []
+        if not self.single_mode:
+            # Si no está activado el modo de estudiante único,
+            # extraer la cédula ingresada
+            ci = self.estudiante_input.text().strip()
+            # Buscar el estudiante por su cédula
+            self.estudiante = crud.find_student_by_ci(ci)
+            # Si no se encuentra el estudiante, mostrar error
+            if not self.estudiante:
+                utils.show_error_message('Estudiante no encontrado.', self)
+                return
+        output.append(
+            f'<b>Nombre y apellido:</b> {self.estudiante["nombre"]} '
+            f'{self.estudiante["apellido"]}')
+        output.append(f'<b>C.I.:</b> {self.estudiante["ci"]}')
+        output.append(f'<b>Teléfono:</b> {self.estudiante["telefono"]}')
+        output.append(f'<b>Dirección:</b> {self.estudiante["direccion"]}')
+        carrera = crud.read_career_info(self.estudiante['id_carrera'])
+        output.append(f'<b>Carrera:</b> {carrera["nombre"]} ({carrera["id"]})')
+        mencion = carrera["mencion"]
+        if mencion is not None:
+            output.append(f'<b>Mención:</b> {mencion}')
+        self.output_text.setHtml('<br>'.join(output))
 
 
 class StudentRecordWidget(qtw.QWidget):
@@ -94,12 +137,11 @@ class StudentRecordWidget(qtw.QWidget):
             self.single_mode = True
             self.estudiante = student
         self._create_ui()
-        self._find_record()
+        self._get_record()
 
     def _create_ui(self):
-        """Crea la interfaz gráfica de consulta de récord académico."""
+        """Crea la interfaz gráfica del componente."""
         # Estructura
-        main_widget = qtw.QWidget()
         main_layout = qtw.QVBoxLayout()
         # Cabecera
         main_layout.addWidget(utils.create_label_h1('Récord académico'))
@@ -119,7 +161,7 @@ class StudentRecordWidget(qtw.QWidget):
         main_layout.addLayout(form_layout)
         # Botón de consulta
         consultar_btn = qtw.QPushButton('Consultar')
-        consultar_btn.clicked.connect(self._find_record)
+        consultar_btn.clicked.connect(self._get_record)
         main_layout.addWidget(consultar_btn)
         # Tabla de datos
         self.record_tbl = qtw.QTableView()
@@ -152,7 +194,7 @@ class StudentRecordWidget(qtw.QWidget):
         main_layout.addWidget(self.indice_academico)
         self.setLayout(main_layout)
 
-    def _find_record(self):
+    def _get_record(self):
         """Consulta el récord académico con los datos ingresados."""
         if not self.single_mode:
             # Si no está activado el modo de estudiante único,
