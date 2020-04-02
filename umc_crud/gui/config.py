@@ -50,6 +50,8 @@ class ConfigDialog(qtw.QDialog):
         # Verifica que ningún dato esté vacío
         for item in mysql_data.values():
             if not item:
+                utils.show_error_message(
+                    'Complete todos los campos de configuración.', self)
                 return
         # Crea el archivo de configuración
         create_config(mysql_data)

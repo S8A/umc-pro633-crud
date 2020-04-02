@@ -55,14 +55,10 @@ class LoginDialog(qtw.QDialog):
                 self.user_login.emit(result['id'], result['admin'])
                 self.accept()
             else:
-                error_msg = qtw.QErrorMessage(self)
-                error_msg.setModal(True)
-                error_msg.showMessage(
-                    'Valor inesperado en el registro de usuario.')
+                utils.show_error_message(
+                    'Valor inesperado en el registro de usuario.', self)
         else:
             # Si los datos no coinciden con ningún usuario, se muestra
             # un mensaje de error.
-            error_msg = qtw.QErrorMessage(self)
-            error_msg.setModal(True)
-            error_msg.showMessage(
-                'Usuario o contraseña incorrecta. Intente de nuevo.')
+            utils.show_error_message(
+                'Usuario o contraseña incorrecta. Intente de nuevo.', self)
