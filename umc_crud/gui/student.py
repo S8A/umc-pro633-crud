@@ -9,9 +9,9 @@ import PyQt5.QtWidgets as qtw
 class MainWindow(qtw.QMainWindow):
     """Ventana principal del módulo de estudiante."""
 
-    def __init__(self, user_id):
+    def __init__(self, user_id, parent=None):
         """Inicialización."""
-        super().__init__()
+        super().__init__(parent)
         self.estudiante = crud.find_student_by_username(user_id)
         self.setWindowTitle(
             f'Módulo de Estudiante - {user_id} - UMC Campus CRUD')
@@ -86,9 +86,9 @@ class MainWindow(qtw.QMainWindow):
 class StudentRecordWidget(qtw.QWidget):
     """Interfaz de consulta de récord académico."""
 
-    def __init__(self, student=None):
+    def __init__(self, student=None, parent=None):
         """Inicialización."""
-        super().__init__()
+        super().__init__(parent)
         self.record = {}
         if student is not None:
             # Si se inicializa con un estudiante, se establece el modo
@@ -108,21 +108,42 @@ class StudentRecordWidget(qtw.QWidget):
         # Formulario de búsqueda
         form_layout = qtw.QFormLayout()
         if not self.single_mode:
+            # Campo de cédula del estudiante, si el modo de estudiante
+            # único no aplica
             self.estudiante_input = qtw.QLineEdit()
             form_layout.addRow('Estudiante (C.I.)', self.estudiante_input)
+        # Campo de materias a consultar
         self.materias_input = qtw.QLineEdit()
         form_layout.addRow('Materias', self.materias_input)
+        # Campo de período académico a consultar
         self.periodo_input = qtw.QLineEdit()
         form_layout.addRow('Período', self.periodo_input)
         main_layout.addLayout(form_layout)
+        # Botón de consulta
         consultar_btn = qtw.QPushButton('Consultar')
         consultar_btn.clicked.connect(self._find_record)
         main_layout.addWidget(consultar_btn)
         # Tabla de datos
-        # TODO: Convertir la tabla a QTableView
-        self.record_tbl = qtw.QTextEdit()
-        self.record_tbl.setReadOnly(True)
-        self.record_tbl.setFontFamily('monospace')
+        self.record_tbl = qtw.QTableView()
+        # Encabezados de la tabla
+        self.record_headers = {'id': 'Código',
+                               'nombre': 'Materia',
+                               'uc': 'UC',
+                               'nota': 'Nota',
+                               'periodo': 'Período'}
+        # Modelo interno de la tabla
+        self.record_tbl_model = RecordTableModel(
+            self.record, self.record_headers)
+        self.record_tbl.setModel(self.record_tbl_model)
+        # Configura el encabezado de la tabla
+        self.record_tbl_header = self.record_tbl.horizontalHeader()
+        for i, header in enumerate(self.record_headers.keys()):
+            # Todas las columnas se ajustan a su contenido
+            resize_mode = qtw.QHeaderView.ResizeToContents
+            if header == 'nombre':
+                # Excepto la columna del nombre de materia, que se expande
+                resize_mode = qtw.QHeaderView.Stretch
+            self.record_tbl_header.setSectionResizeMode(i, resize_mode)
         main_layout.addWidget(self.record_tbl, stretch=2)
         # Información adicional
         self.uc_cursadas = utils.create_label('')
@@ -161,8 +182,8 @@ class StudentRecordWidget(qtw.QWidget):
         self.record = crud.read_records(self.estudiante['ci'],
                                         materia_ids,
                                         periodo)
-        # Mostrar el récord académico en la tabla
-        self.record_tbl.setText(utils.create_text_record(self.record))
+        # Realiza el reemplazo de los datos
+        self.record_tbl_model.replace_record(self.record)
         # Actualiza la información adicional
         self._update_record_info()
 
@@ -182,7 +203,48 @@ class StudentRecordWidget(qtw.QWidget):
         # Muestra el índice académico del registro dado
         self.indice_academico.setText(
             f'Índice Académico (IA): {calculate_ia(self.record) or "N/A"}')
-        # Ajusta el tamaño del texto
-        self.uc_cursadas.adjustSize()
-        self.uc_aprobadas.adjustSize()
-        self.indice_academico.adjustSize()
+
+
+class RecordTableModel(qtc.QAbstractTableModel):
+    """Modelo interno para tablas de récords académicos."""
+
+    def __init__(self, record, header, parent=None):
+        """Inicialización"""
+        super().__init__(parent)
+        self.record = record
+        self.header = header
+
+    def data(self, index, role):
+        """Obtiene los datos del récord en el índice y rol dado."""
+        if role == qtc.Qt.DisplayRole:
+            # Muestra los datos del índice dado
+            column_name = self._header_column(index.column())
+            return self.record[index.row()][column_name]
+
+    def _header_column(self, i):
+        """Obtiene el nombre de la columna a partir de su número."""
+        return list(self.header.keys())[i]
+
+    def rowCount(self, parent):
+        """Obtiene el número de registros."""
+        return len(self.record)
+
+    def columnCount(self, parent):
+        """Obtiene el número de columnas de la tabla."""
+        return len(self.header)
+
+    def headerData(self, section, orientation, role):
+        """Obtiene los datos de la cabecera de la tabla."""
+        if role == qtc.Qt.DisplayRole:
+            if orientation == qtc.Qt.Horizontal:
+                column_name = self._header_column(section)
+                return str(self.header[column_name])
+
+    def replace_record(self, record):
+        """Reemplaza los registros de la tabla."""
+        # Notifica el cambio
+        self.beginResetModel()
+        # Realiza el reemplazo
+        self.record = record
+        # Notifica el fin de la operación
+        self.endResetModel()
