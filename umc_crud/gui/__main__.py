@@ -2,7 +2,7 @@ import argparse
 import sys
 from PyQt5.QtWidgets import QApplication
 from ..config import is_configured
-from . import config, login, student
+from . import admin, config, login, student
 
 
 class MainController:
@@ -38,8 +38,8 @@ class MainController:
 
     def show_admin_window(self, user_id):
         """Muesta la ventana del módulo de administrador."""
-        print('TODO: show_admin_window')
-        print(user_id)
+        self.admin_window = admin.MainWindow(user_id)
+        self.admin_window.show()
 
 
 def main(args):
