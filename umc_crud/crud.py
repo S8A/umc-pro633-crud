@@ -68,6 +68,14 @@ def delete_records(record):
     return execute_sql(query, args, many=True)
 
 
+# Tabla usuario
+
+def authenticate_user(usuario_id, usuario_pw, test=False):
+    """Trata de encontrar la combinación dada de usuario y contraseña."""
+    query = 'SELECT * FROM usuario WHERE id = %s AND password = %s'
+    return execute_sql(query, args=[usuario_id, usuario_pw], rows=1)
+
+
 # Tabla estudiante
 
 def find_student_by_username(usuario_id, test=False):

@@ -1,6 +1,6 @@
 import PyQt5.QtCore as qtc
 import PyQt5.QtWidgets as qtw
-from .. import db
+from .. import crud
 from . import utils
 
 
@@ -41,13 +41,9 @@ class LoginDialog(qtw.QDialog):
 
     def _login(self):
         """Intenta iniciar sesión con los datos ingresados."""
-        # Petición de búsqueda en la tabla usuario
-        query = 'SELECT * FROM usuario WHERE id = %s AND password = %s'
         # Ejecuta la búsqueda por usuario y contraseña
-        result = db.execute_sql(query,
-                                args=[self.user_id.text(),
-                                      self.user_pw.text()],
-                                rows=1)
+        result = crud.authenticate_user(
+            self.user_id.text(), self.user_pw.text())
         if result is not None:
             # Si los datos coinciden con un usuario, se verifica si es
             # un administrador o un estudiante y se emite la señal apropiada
