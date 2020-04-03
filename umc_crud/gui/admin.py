@@ -82,14 +82,17 @@ class MainWindow(qtw.QMainWindow):
         self.resize(700, 600)
 
 
-class RecordMakerWidget(qtw.QWidget):
-    """Componente de registro de calificaciones."""
+class RecordManipulatorWidget(qtw.QWidget):
+    """Componente para manipular calificaciones de un estudiante."""
 
-    def __init__(self, parent=None):
-        """Inicializa el componente de registro de calificaciones."""
+    def __init__(self, title, editable, buttons, parent=None):
+        """Inicializa el componente."""
         super().__init__(parent)
         self.estudiante_ci = None
-        # Inicializa la interfaz gráfica
+        self.title = title
+        self.editable = editable
+        self.buttons = buttons
+        # Inicaliza la interfaz gráfica
         self._create_ui()
 
     def _create_ui(self):
@@ -97,21 +100,20 @@ class RecordMakerWidget(qtw.QWidget):
         # Estructura
         main_layout = qtw.QVBoxLayout()
         # Cabecera
-        main_layout.addWidget(utils.create_label_h1(
-            'Registro de calificaciones'))
+        main_layout.addWidget(utils.create_label_h1(self.title))
         # Formulario de búsqueda
         form_layout = qtw.QFormLayout()
         # Campo de cédula del estudiante
         self.estudiante_input = qtw.QLineEdit()
         form_layout.addRow('Estudiante (C.I.)', self.estudiante_input)
-        # Campo de materias a registrar
+        # Campo de materias
         self.materias_input = qtw.QLineEdit()
         form_layout.addRow('Materias', self.materias_input)
         main_layout.addLayout(form_layout)
-        # Botón de búsqueda
-        buscar_btn = qtw.QPushButton('Buscar')
-        buscar_btn.clicked.connect(self._prepare_records)
-        main_layout.addWidget(buscar_btn)
+        # Botón de búsqueda/consulta/preparación de los datos
+        button0 = qtw.QPushButton(self.buttons[0][0])
+        button0.clicked.connect(self.buttons[0][1])
+        main_layout.addWidget(button0)
         # Tabla de datos
         self.record_tbl = qtw.QTableView()
         # Encabezados de la tabla
@@ -122,7 +124,7 @@ class RecordMakerWidget(qtw.QWidget):
                                'periodo': 'Período'}
         # Modelo interno de la tabla
         self.record_tbl_model = student.RecordTableModel(
-            self.record_headers, editable=True)
+            self.record_headers, editable=self.editable)
         self.record_tbl.setModel(self.record_tbl_model)
         # Configura el encabezado de la tabla
         self.record_tbl_header = self.record_tbl.horizontalHeader()
@@ -134,11 +136,26 @@ class RecordMakerWidget(qtw.QWidget):
                 resize_mode = qtw.QHeaderView.Stretch
             self.record_tbl_header.setSectionResizeMode(i, resize_mode)
         main_layout.addWidget(self.record_tbl, stretch=2)
-        # Botón de registro de calificaciones
-        registrar_btn = qtw.QPushButton('Registrar')
-        registrar_btn.clicked.connect(self._make_records)
-        main_layout.addWidget(registrar_btn)
+        # Botón de acción principal
+        button1 = qtw.QPushButton(self.buttons[1][0])
+        button1.clicked.connect(self.buttons[1][1])
+        main_layout.addWidget(button1)
         self.setLayout(main_layout)
+
+
+class RecordMakerWidget(RecordManipulatorWidget):
+    """Componente de registro de calificaciones."""
+
+    def __init__(self, parent=None):
+        """Inicializa el componente de registro de calificaciones."""
+        super().__init__(
+            title='Registro de calificaciones',
+            editable=True,
+            buttons=[
+                ['Buscar', self._prepare_records],
+                ['Registrar', self._make_records]
+            ],
+            parent=parent)
 
     def _prepare_records(self):
         """Prepara los datos de las calificaciones a registrar."""
@@ -364,63 +381,19 @@ class RecordLoaderWidget(qtw.QWidget):
         self.record_tbl_model.replace_record({})
 
 
-class RecordUpdaterWidget(qtw.QWidget):
+class RecordUpdaterWidget(RecordManipulatorWidget):
     """Componente de modificación de calificaciones."""
 
     def __init__(self, parent=None):
-        """Inicializa el componente de modificación de calificaciones."""
-        super().__init__(parent)
-        self.estudiante_ci = None
-        # Inicializa la interfaz gráfica
-        self._create_ui()
-
-    def _create_ui(self):
-        """Crea la interfaz gráfica del componente."""
-        # Estructura
-        main_layout = qtw.QVBoxLayout()
-        # Cabecera
-        main_layout.addWidget(utils.create_label_h1(
-            'Modificación de calificaciones'))
-        # Formulario de búsqueda
-        form_layout = qtw.QFormLayout()
-        # Campo de cédula del estudiante
-        self.estudiante_input = qtw.QLineEdit()
-        form_layout.addRow('Estudiante (C.I.)', self.estudiante_input)
-        # Campo de materias a registrar
-        self.materias_input = qtw.QLineEdit()
-        form_layout.addRow('Materias', self.materias_input)
-        main_layout.addLayout(form_layout)
-        # Botón de búsqueda
-        buscar_btn = qtw.QPushButton('Buscar')
-        buscar_btn.clicked.connect(self._prepare_records)
-        main_layout.addWidget(buscar_btn)
-        # Tabla de datos
-        self.record_tbl = qtw.QTableView()
-        # Encabezados de la tabla
-        self.record_headers = {'id': 'Código',
-                               'nombre': 'Materia',
-                               'uc': 'UC',
-                               'nota': 'Nota',
-                               'periodo': 'Período'}
-        # Modelo interno de la tabla
-        self.record_tbl_model = student.RecordTableModel(
-            self.record_headers, editable=True)
-        self.record_tbl.setModel(self.record_tbl_model)
-        # Configura el encabezado de la tabla
-        self.record_tbl_header = self.record_tbl.horizontalHeader()
-        for i, header in enumerate(self.record_headers.keys()):
-            # Todas las columnas se ajustan a su contenido
-            resize_mode = qtw.QHeaderView.ResizeToContents
-            if header == 'nombre':
-                # Excepto la columna del nombre de materia, que se expande
-                resize_mode = qtw.QHeaderView.Stretch
-            self.record_tbl_header.setSectionResizeMode(i, resize_mode)
-        main_layout.addWidget(self.record_tbl, stretch=2)
-        # Botón de modificación de calificaciones
-        modificar_btn = qtw.QPushButton('Modificar')
-        modificar_btn.clicked.connect(self._update_records)
-        main_layout.addWidget(modificar_btn)
-        self.setLayout(main_layout)
+        """Inicializa el componente de registro de calificaciones."""
+        super().__init__(
+            title='Modificación de calificaciones',
+            editable=True,
+            buttons=[
+                ['Buscar', self._prepare_records],
+                ['Modificar', self._update_records]
+            ],
+            parent=parent)
 
     def _prepare_records(self):
         """Prepara los datos de las calificaciones a modificar."""
@@ -479,62 +452,19 @@ class RecordUpdaterWidget(qtw.QWidget):
         self.record_tbl_model.replace_record([])
 
 
-class RecordDeleterWidget(qtw.QWidget):
+class RecordDeleterWidget(RecordManipulatorWidget):
     """Componente de eliminación de calificaciones."""
 
     def __init__(self, parent=None):
-        """Inicializa el componente de eliminación de calificaciones."""
-        super().__init__(parent)
-        self.estudiante_ci = None
-        # Inicializa la interfaz gráfica
-        self._create_ui()
-
-    def _create_ui(self):
-        """Crea la interfaz gráfica del componente."""
-        # Estructura
-        main_layout = qtw.QVBoxLayout()
-        # Cabecera
-        main_layout.addWidget(utils.create_label_h1(
-            'Modificación de calificaciones'))
-        # Formulario de búsqueda
-        form_layout = qtw.QFormLayout()
-        # Campo de cédula del estudiante
-        self.estudiante_input = qtw.QLineEdit()
-        form_layout.addRow('Estudiante (C.I.)', self.estudiante_input)
-        # Campo de materias a registrar
-        self.materias_input = qtw.QLineEdit()
-        form_layout.addRow('Materias', self.materias_input)
-        main_layout.addLayout(form_layout)
-        # Botón de búsqueda
-        buscar_btn = qtw.QPushButton('Buscar')
-        buscar_btn.clicked.connect(self._prepare_records)
-        main_layout.addWidget(buscar_btn)
-        # Tabla de datos
-        self.record_tbl = qtw.QTableView()
-        # Encabezados de la tabla
-        self.record_headers = {'id': 'Código',
-                               'nombre': 'Materia',
-                               'uc': 'UC',
-                               'nota': 'Nota',
-                               'periodo': 'Período'}
-        # Modelo interno de la tabla
-        self.record_tbl_model = student.RecordTableModel(self.record_headers)
-        self.record_tbl.setModel(self.record_tbl_model)
-        # Configura el encabezado de la tabla
-        self.record_tbl_header = self.record_tbl.horizontalHeader()
-        for i, header in enumerate(self.record_headers.keys()):
-            # Todas las columnas se ajustan a su contenido
-            resize_mode = qtw.QHeaderView.ResizeToContents
-            if header == 'nombre':
-                # Excepto la columna del nombre de materia, que se expande
-                resize_mode = qtw.QHeaderView.Stretch
-            self.record_tbl_header.setSectionResizeMode(i, resize_mode)
-        main_layout.addWidget(self.record_tbl, stretch=2)
-        # Botón de eliminación de calificaciones
-        eliminar_btn = qtw.QPushButton('Eliminar')
-        eliminar_btn.clicked.connect(self._delete_records)
-        main_layout.addWidget(eliminar_btn)
-        self.setLayout(main_layout)
+        """Inicializa el componente de registro de calificaciones."""
+        super().__init__(
+            title='Eliminación de calificaciones',
+            editable=False,
+            buttons=[
+                ['Buscar', self._prepare_records],
+                ['Eliminar', self._delete_records]
+            ],
+            parent=parent)
 
     def _prepare_records(self):
         """Prepara los datos de las calificaciones a eliminar."""
