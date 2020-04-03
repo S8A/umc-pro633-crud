@@ -170,7 +170,7 @@ class RecordMakerWidget(qtw.QWidget):
             materias = crud.find_subjects(materia_ids)
             # Agregar campos de nota y período para crear registros parciales
             for m in materias:
-                m.update({'nota': '', 'periodo': ''})
+                m.update({'nota': 0, 'periodo': ''})
             # Guardar los registros parciales
             self.record_tbl_model.replace_record(materias)
         else:
@@ -182,28 +182,25 @@ class RecordMakerWidget(qtw.QWidget):
 
     def _make_records(self):
         """Registra las nuevas calificaciones."""
-        # Verifica que todos los campos estén llenos
+        # Verificar que todos los campos estén llenos
         for r in self.record_tbl_model.record:
             if not r['nota'] or not r['periodo']:
                 utils.show_error_message('No puede haber campos vacíos.', self)
                 return
-        # Crea los registros a almacenar
+        # Crear los registros a almacenar
         record = []
         for r in self.record_tbl_model.record:
             record.append({'ci_estudiante': self.estudiante_ci,
                            'id_materia': r['id'],
                            'nota': r['nota'],
                            'periodo': r['periodo']})
-        # Realiza el registro en la base de datos
+        # Realizar el registro en la base de datos
         crud.create_records(record)
-        # Vacía los campos y la tabla
+        # Vaciar los campos y la tabla
         self.estudiante_ci = None
-        self._clear_inputs()
-        self.record_tbl_model.replace_record({})
-
-    def _clear_inputs(self):
         self.estudiante_input.clear()
         self.materias_input.clear()
+        self.record_tbl_model.replace_record([])
 
 
 class RecordLoaderWidget(qtw.QWidget):
@@ -346,19 +343,19 @@ class RecordLoaderWidget(qtw.QWidget):
 
     def _make_records(self):
         """Registra las nuevas calificaciones."""
-        # Verifica que todos los campos estén llenos
+        # Verificar que todos los campos estén llenos
         for r in self.record_tbl_model.record:
             if not r['nota'] or not r['periodo']:
                 utils.show_error_message('No puede haber campos vacíos.', self)
                 return
-        # Crea los registros a almacenar
+        # Crear los registros a almacenar
         record = []
         for r in self.record_tbl_model.record:
             record.append({'ci_estudiante': r['ci'],
                            'id_materia': r['id'],
                            'nota': r['nota'],
                            'periodo': r['periodo']})
-        # Realiza el registro en la base de datos
+        # Realizar el registro en la base de datos
         crud.create_records(record)
         # Vacía los campos y la tabla
         self.archivo.clear()
