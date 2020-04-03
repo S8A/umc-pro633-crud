@@ -9,6 +9,14 @@ de los componentes de la interfaz gráfica.
 import PyQt5.QtWidgets as qtw
 
 
+def center_window(window):
+    """Posiciona la ventana dada en el centro del escritorio."""
+    frame_geometry = window.frameGeometry()
+    center = qtw.QDesktopWidget().availableGeometry().center()
+    frame_geometry.moveCenter(center)
+    window.move(frame_geometry.topLeft())
+
+
 def create_label(s, wrap=True):
     """Crea un QLabel con el texto dado."""
     l = qtw.QLabel(s)
