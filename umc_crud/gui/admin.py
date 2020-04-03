@@ -82,7 +82,7 @@ class MainWindow(qtw.QMainWindow):
     def _load_csv_records(self):
         """Crea la interfaz de carga de archivo de calificaciones."""
         self.setCentralWidget(RecordLoaderWidget())
-        self.resize(700, 700)
+        self.resize(700, 600)
 
     def _update_records(self):
         """Crea la interfaz de modificación de calificaciones."""
@@ -298,6 +298,8 @@ class RecordLoaderWidget(qtw.QWidget):
         # Solicitar archivo CSV al usuario
         archivo = dialogo_archivo.getOpenFileName(
             self, caption='Abrir archivo de registros', filter='*.csv')[0]
+        if not archivo:
+            return
         self.archivo.setText(archivo)
         # Extraer contenido del CSV
         csv = read_csv(archivo)
