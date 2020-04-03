@@ -49,29 +49,29 @@ class MainWindow(qtw.QMainWindow):
         self.options[index][1]()
 
     def _get_personal_info(self):
-        """Crea la interfaz de consulta de información personal."""
+        """Crea el componente de consulta de información personal."""
         self.setCentralWidget(StudentInfoWidget(student=self.estudiante))
         self.resize(400, 300)
 
     def _get_record(self):
-        """Crea la interfaz de consulta del récord académico."""
+        """Crea el componente de consulta del récord académico."""
         self.setCentralWidget(StudentRecordWidget(student=self.estudiante))
         self.resize(700, 600)
 
 
 class StudentInfoWidget(qtw.QWidget):
-    """Interfaz de consulta de información personal."""
+    """Componente de consulta de información personal."""
 
     def __init__(self, student=None, parent=None):
-        """Inicializa la interfaz de consulta de información personal."""
+        """Inicializa el componente de consulta de información personal."""
         super().__init__(parent)
-        # Si se inicializa con un estudiante, se establece el modo
-        # de estudiante único para desactivar la búsqueda por cédula
         self.estudiante = student
-        self.single_mode = self.estudiante is not None
+        # Si no se provee un estudiante, significa que el
+        # componente se usará en modo de administrador
+        self.admin_mode = self.estudiante is None
         # Inicializa la interfaz gráfica
         self._create_ui()
-        if self.single_mode:
+        if not self.admin_mode:
             self._get_personal_info()
 
     def _create_ui(self):
@@ -80,11 +80,10 @@ class StudentInfoWidget(qtw.QWidget):
         layout = qtw.QVBoxLayout()
         # Cabecera
         layout.addWidget(utils.create_label_h1('Información personal'))
-        # Formulario de búsqueda (no aplica en modo de estudiante único)
-        if not self.single_mode:
+        # Formulario de consulta (modo de administrador solamente)
+        if self.admin_mode:
             form_layout = qtw.QFormLayout()
-            # Campo de cédula del estudiante, si el modo de estudiante
-            # único no aplica
+            # Campo de cédula del estudiante
             self.estudiante_input = qtw.QLineEdit()
             form_layout.addRow('Estudiante (C.I.)', self.estudiante_input)
             layout.addLayout(form_layout)
@@ -99,22 +98,25 @@ class StudentInfoWidget(qtw.QWidget):
         self.setLayout(layout)
 
     def _get_personal_info(self):
-        """Consulta la información personal del estudiante dato."""
+        """Consulta la información personal del estudiante dado."""
+        # Datos de salida
         output = []
-        if not self.single_mode:
-            # Si no está activado el modo de estudiante único,
-            # extraer la cédula ingresada
+        # Si se está en modo de administrador, se deben extraer los
+        # datos del estudiante a partir del formulario de consulta
+        if self.admin_mode:
+            # Extraer la cédula ingresada
             ci = self.estudiante_input.text().strip()
-            # Si no se ingresó ninguna cédula, mostrar error
             if not ci:
+                # Si no se ingresó ninguna cédula, mostrar error
                 utils.show_error_message('Ingrese un número de cédula.', self)
                 return
             # Buscar el estudiante por su cédula
             self.estudiante = crud.find_student_by_ci(ci)
-            # Si no se encuentra el estudiante, mostrar error
             if not self.estudiante:
+                # Si no se encuentra el estudiante, mostrar error
                 utils.show_error_message('Estudiante no encontrado.', self)
                 return
+        # Agregar información a los datos de salida
         output.append(
             f'<b>Nombre y apellido:</b> {self.estudiante["nombre"]} '
             f'{self.estudiante["apellido"]}')
@@ -126,22 +128,23 @@ class StudentInfoWidget(qtw.QWidget):
         mencion = carrera["mencion"]
         if mencion is not None:
             output.append(f'<b>Mención:</b> {mencion}')
+        # Mostrar información
         self.output_text.setHtml('<br>'.join(output))
 
 
 class StudentRecordWidget(qtw.QWidget):
-    """Interfaz de consulta de récord académico."""
+    """Componente de consulta de récord académico."""
 
     def __init__(self, student=None, parent=None):
-        """Inicializa la interfaz de consulta de récord académico."""
+        """Inicializa el componente de consulta de récord académico."""
         super().__init__(parent)
-        # Si se inicializa con un estudiante, se establece el modo
-        # de estudiante único para desactivar la búsqueda por cédula
         self.estudiante = student
-        self.single_mode = self.estudiante is not None
+        # Si no se provee un estudiante, significa que el
+        # componente se usará en modo de administrador
+        self.admin_mode = self.estudiante is None
         # Inicializa la interfaz gráfica
         self._create_ui()
-        if self.single_mode:
+        if not self.admin_mode:
             self._get_record()
 
     def _create_ui(self):
@@ -150,11 +153,11 @@ class StudentRecordWidget(qtw.QWidget):
         main_layout = qtw.QVBoxLayout()
         # Cabecera
         main_layout.addWidget(utils.create_label_h1('Récord académico'))
-        # Formulario de búsqueda
+        # Formulario de consulta
         form_layout = qtw.QFormLayout()
-        if not self.single_mode:
-            # Campo de cédula del estudiante, si el modo de estudiante
-            # único no aplica
+        if self.admin_mode:
+            # Si se está en modo de administrador, se necesita
+            # un campo para la cédula del estudiante
             self.estudiante_input = qtw.QLineEdit()
             form_layout.addRow('Estudiante (C.I.)', self.estudiante_input)
         # Campo de materias a consultar
@@ -200,18 +203,19 @@ class StudentRecordWidget(qtw.QWidget):
 
     def _get_record(self):
         """Consulta el récord académico con los datos ingresados."""
-        if not self.single_mode:
-            # Si no está activado el modo de estudiante único,
-            # extraer la cédula ingresada
+        # Si se está en modo de administrador, se deben extraer los
+        # datos del estudiante a partir del formulario de consulta
+        if self.admin_mode:
+            # Extraer la cédula ingresada
             ci = self.estudiante_input.text().strip()
-            # Si no se ingresó ninguna cédula, mostrar error
             if not ci:
+                # Si no se ingresó ninguna cédula, mostrar error
                 utils.show_error_message('Ingrese un número de cédula.', self)
                 return
             # Buscar el estudiante por su cédula
             self.estudiante = crud.find_student_by_ci(ci)
-            # Si no se encuentra el estudiante, mostrar error
             if not self.estudiante:
+                # Si no se encuentra el estudiante, mostrar error
                 utils.show_error_message('Estudiante no encontrado.', self)
                 return
         # Extraer las materias ingresadas
@@ -234,26 +238,26 @@ class StudentRecordWidget(qtw.QWidget):
         record = crud.read_records(self.estudiante['ci'],
                                    materia_ids,
                                    periodo)
-        # Realiza el reemplazo de los datos
+        # Realizar el reemplazo de los datos
         self.record_tbl_model.replace_record(record)
-        # Actualiza la información adicional
+        # Actualizar la información adicional
         self._update_record_info()
 
     def _update_record_info(self):
         """Actualiza la información adicional del récord académico."""
-        # Extrae las UC de las materias cursadas
+        # Extraer las UC de las materias cursadas
         uc_cursadas = [r['uc'] for r in self.record_tbl_model.record]
-        # Muestra el número de materias cursadas y su total de UC
+        # Mostrar el número de materias cursadas y su total de UC
         self.uc_cursadas.setText(
             f'Materias cursadas: {len(uc_cursadas)} ({sum(uc_cursadas)} UC)')
-        # Extrae las UC de las materias aprobadas
+        # Extraer las UC de las materias aprobadas
         uc_aprobadas = [r['uc'] for r in self.record_tbl_model.record
                         if r['nota'] >= 12]
-        # Muestra el número de materias aprobadas y su total de UC
+        # Mostrar el número de materias aprobadas y su total de UC
         self.uc_aprobadas.setText(
             f'Materias aprobadas: {len(uc_aprobadas)} '
             f'({sum(uc_aprobadas)} UC)')
-        # Muestra el índice académico del registro dado
+        # Mostrar el índice académico del registro dado
         ia = calculate_ia(self.record_tbl_model.record) or "N/A"
         self.indice_academico.setText(f'Índice Académico (IA): {ia}')
 
@@ -273,10 +277,10 @@ class RecordTableModel(qtc.QAbstractTableModel):
         col = self._header_column(index.column())
         flags = qtc.QAbstractTableModel.flags(self, index)
         if col in self.editable:
-            # Indica si la columna es editable
+            # Indicar si la columna es editable
             return flags | qtc.Qt.ItemIsEditable
         else:
-            # De lo contrario, da las flags predeterminadas
+            # De lo contrario, devolver las flags predeterminadas
             return flags
 
     def data(self, index, role):
@@ -284,10 +288,10 @@ class RecordTableModel(qtc.QAbstractTableModel):
         row = index.row()
         col = self._header_column(index.column())
         if role == qtc.Qt.DisplayRole:
-            # Muestra los datos del índice dado
+            # Mostrar los datos del índice dado
             return self.record[row][col]
         if col in self.editable and role == qtc.Qt.EditRole:
-            # Si la columna es editable, provee el dato existente
+            # Si la columna es editable, devolver el dato existente
             return self.record[row][col]
 
     def rowCount(self, parent):
@@ -310,11 +314,11 @@ class RecordTableModel(qtc.QAbstractTableModel):
         row = index.row()
         col = self._header_column(index.column())
         if col in self.editable and role == qtc.Qt.EditRole:
-            # Si se está editando en una columna editable
+            # Si se permite editar en la columna actual
             if col == 'nota':
-                # Si se edita la nota
+                # Si se edita en la columna de la nota
                 try:
-                    # Trata de convertir el valor ingresado a entero
+                    # Tratar de convertir el valor ingresado a entero
                     nota = int(value)
                     if nota in range(21):
                         # Si la nota ingresada está entre 0 y 20,
@@ -328,7 +332,7 @@ class RecordTableModel(qtc.QAbstractTableModel):
                     # la entrada es inválida. Cambio fallido.
                     return False
             elif col == 'periodo':
-                # Si se edita la columna del período académico
+                # Si se edita en la columna del período académico
                 if validate_period(value):
                     # Si el valor ingresado es un período válido,
                     # registrar el nuevo valor
@@ -345,9 +349,6 @@ class RecordTableModel(qtc.QAbstractTableModel):
 
     def replace_record(self, record):
         """Reemplaza los registros de la tabla."""
-        # Notifica el cambio
         self.beginResetModel()
-        # Realiza el reemplazo
         self.record = record
-        # Notifica el fin de la operación
         self.endResetModel()
