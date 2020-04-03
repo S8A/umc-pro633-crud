@@ -1,6 +1,14 @@
+# coding=utf-8
+"""Módulo de inicio de sesión.
+
+Provee la función login() que permite al usuario ingresar sus
+credenciales del sistema campus UMC y lo dirige al módulo de
+estudiante o administrador según sea el caso.
+"""
+
+
 from . import admin, crud, io, student
 
-# Módulo de inicio de sesión
 
 def login():
     """Permite iniciar sesión como un usuario del campus UMC."""

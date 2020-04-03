@@ -1,3 +1,16 @@
+# coding=utf-8
+"""Módulo de estudiante.
+
+Mediante este módulo los usuarios de la base de datos que sean
+estudiantes pueden consultar su información personal, récord
+académico e índices académicos.
+
+La ejecución del módulo debe empezar con la ventana principal
+del módulo (MainWindow), ya que esta provee acceso a los demás
+componentes y funciones del módulo.
+"""
+
+
 import PyQt5.QtCore as qtc
 import PyQt5.QtWidgets as qtw
 from .. import crud

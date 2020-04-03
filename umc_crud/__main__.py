@@ -1,6 +1,18 @@
-from .login import login
-from .config import config, is_configured
+# coding=utf-8
+"""Módulo principal del programa.
+
+La ejecución del programa debe comenzar en este módulo.
+
+La función main() toma los argumentos ingresados, verifica la
+configuración y ejecuta el módulo de configuración o el de inicio
+de sesión según sea el caso.
+"""
+
+
 import argparse
+from .config import config, is_configured
+from .login import login
+
 
 def main(args):
     """Función principal del programa."""

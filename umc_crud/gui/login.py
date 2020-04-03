@@ -1,3 +1,13 @@
+# coding=utf-8
+"""Módulo de inicio de sesión.
+
+Provee el diálogo de inicio de sesión (LoginDialog), el cual
+permite al usuario ingresar sus credenciales del sistema campus
+UMC y lo dirige al módulo de estudiante o administrador según
+sea el caso.
+"""
+
+
 import PyQt5.QtCore as qtc
 import PyQt5.QtWidgets as qtw
 from .. import crud

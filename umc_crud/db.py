@@ -1,7 +1,16 @@
-from .config import read_config
-import pymysql
+# coding=utf-8
+"""Módulo de manejo de base datos.
 
-# Módulo de manejo de base datos
+Este módulo provee las funciones básicas de interacción con la
+base de datos MySQL: una función para conectarse a la base de datos
+usando los datos del archivo de configuración, y una función para
+realizar peticiones SQL y obtener su resultado.
+"""
+
+
+import pymysql
+from .config import read_config
+
 
 def connect():
     """Crea una conexión a la base de datos indicada en la configuración."""
@@ -19,11 +28,11 @@ def execute_sql(query, args=None, rows=None, many=False, test=False):
     Ejecuta una petición SQL y devuelve su resultado.
 
     Argumentos:
-    query (str) -- Petición a realizar
-    args (tuple/list/dict) --  Parámetros de la petición (opc)
-    rows (int or None) -- Número de filas de resultado (opc).
-    many (bool) -- Si la petición se hará con varios conjuntos de datos.
-    test (bool) -- Modo de prueba (solo muestra la petición)
+        query (str): Petición a realizar
+        args (tuple/list/dict): Parámetros de la petición (opc)
+        rows (int or None): Número de filas de resultado (opc).
+        many (bool): Si la petición se hará con varios conjuntos de datos.
+        test (bool): Modo de prueba (solo muestra la petición)
     """
     result = None
     # Crea la conexión a la base de datos

@@ -1,3 +1,12 @@
+# coding=utf-8
+"""Módulo de configuración.
+
+Provee el diálogo de configuración del programa (ConfigDialog),
+el cual permite al usuario ingresar los datos de configuración
+y los almacena apropiadamente.
+"""
+
+
 import PyQt5.QtWidgets as qtw
 from ..config import create_config
 from . import utils

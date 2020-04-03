@@ -1,3 +1,16 @@
+# coding=utf-8
+"""Módulo de administrador.
+
+Mediante este módulo los usuarios de la base de datos que sean
+administradores pueden realizar diversas actividades de consulta,
+creación, modificación y eliminación de registros.
+
+La ejecución del módulo debe empezar con la ventana principal
+del módulo (MainWindow), ya que esta provee acceso a los demás
+componentes y funciones del módulo.
+"""
+
+
 import PyQt5.QtCore as qtc
 import PyQt5.QtWidgets as qtw
 from .. import crud

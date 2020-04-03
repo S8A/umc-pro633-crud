@@ -1,6 +1,18 @@
+# coding=utf-8
+"""Módulo de creación, consulta, modificación y eliminación de datos.
+
+Este módulo provee funciones para realizar diversas operaciones
+de alto nivel en la base de datos MySQL. Estas operaciones son la
+base del funcionamiento de los módulos de estudiante y administrador.
+
+Incluye funciones para crear, consultar, modificar y eliminar
+récords académicos, así como funciones de consulta de usuarios,
+estudiantes, carreras y materias.
+"""
+
+
 from .db import execute_sql
 
-# Módulo de creación, consulta, modificación y eliminación de datos de la BDD
 
 # Tabla record
 

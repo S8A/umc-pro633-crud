@@ -1,3 +1,13 @@
+# coding=utf-8
+"""Módulo principal del programa.
+
+La ejecución del programa debe comenzar en este módulo.
+
+La función main() toma los argumentos ingresados, verifica la
+configuración y ejecuta el controlador del flujo del programa.
+"""
+
+
 import argparse
 import sys
 from PyQt5.QtWidgets import QApplication
@@ -6,7 +16,7 @@ from . import admin, config, login, student
 
 
 class MainController:
-    """Controla el flujo del programa."""
+    """Controlador del flujo del programa."""
 
     def __init__(self):
         pass
@@ -26,6 +36,7 @@ class MainController:
         self.login.show()
 
     def show_main_window(self, user_id, user_admin):
+        """Muestra la ventana del módulo correspondiente al usuario."""
         if user_admin:
             self.show_admin_window(user_id)
         else:

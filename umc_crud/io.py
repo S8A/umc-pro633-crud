@@ -1,9 +1,17 @@
+# coding=utf-8
+"""Funciones auxiliares de entrada y salida.
+
+Este módulo provee diversas funciones para la entrada y salida de
+datos en la cónsola, así como la validación de datos ingresados y
+el procesamiento de archivos CSV.
+"""
+
+
 import csv
 import re
 import textwrap as tw
 from math import ceil
 
-# Funciones auxiliares de entrada y salida
 
 def print_h1(s, newline=True):
     """Muestra el texto como encabezado de primer nivel."""

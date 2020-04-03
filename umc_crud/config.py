@@ -1,7 +1,16 @@
-from . import io
-import configparser
+# coding=utf-8
+"""Módulo de configuración.
 
-# Módulo de configuración
+Provee funciones para leer y crear el archivo de configuración,
+verificar si el programa ya está configurado, y permitir al usuario
+ingresar los datos de configuración interactivamente mediante la
+función principal config().
+"""
+
+
+import configparser
+from . import io
+
 
 def config(title=True, intro=True):
     """Configura el programa a partir de la entrada del usuario."""

@@ -1,6 +1,18 @@
+# coding=utf-8
+"""Módulo de estudiante.
+
+Mediante este módulo los usuarios de la base de datos que sean
+estudiantes pueden consultar su información personal, récord
+académico e índices académicos.
+
+La ejecución del módulo debería empezar por la función main(), pues
+esta provee el menú de opciones que es la interfaz principal para
+el usuario.
+"""
+
+
 from . import crud, io
 
-# Módulo de estudiante
 
 def main(user_id):
     """Función principal del módulo de estudiante."""
