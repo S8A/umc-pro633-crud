@@ -1,7 +1,7 @@
 import PyQt5.QtCore as qtc
 import PyQt5.QtWidgets as qtw
 from .. import crud
-from ..io import split_list, validate_period
+from ..io import read_csv, split_list, validate_period
 from ..student import calculate_ia
 from . import student, utils
 
@@ -68,8 +68,8 @@ class MainWindow(qtw.QMainWindow):
 
     def _load_csv_records(self):
         """Crea la interfaz de carga de archivo de calificaciones."""
-        self.setCentralWidget(RecordMakerWidget())
-        self.resize(700, 600)
+        self.setCentralWidget(RecordLoaderWidget())
+        self.resize(700, 700)
 
     def _update_records(self):
         """Crea la interfaz de modificación de calificaciones."""
@@ -175,10 +175,9 @@ class RecordMakerWidget(qtw.QWidget):
             self.record_tbl_model.replace_record(materias)
         else:
             # Si no hay materias por registrar, mostrar error
-            utils.show_error_message(
-                'Ingrese materias que el estudiante '
-                'no haya cursado anteriormente',
-                self)
+            error = ('Ingrese materias que el estudiante '
+                     'no haya cursado anteriormente')
+            utils.show_error_message(error, self)
             return
 
     def _make_records(self):
@@ -186,8 +185,7 @@ class RecordMakerWidget(qtw.QWidget):
         # Verifica que todos los campos estén llenos
         for r in self.record_tbl_model.record:
             if not r['nota'] or not r['periodo']:
-                utils.show_error_message(
-                    'Rellene todos los campos primero.', self)
+                utils.show_error_message('No puede haber campos vacíos.', self)
                 return
         # Crea los registros a almacenar
         record = []
@@ -206,3 +204,162 @@ class RecordMakerWidget(qtw.QWidget):
     def _clear_inputs(self):
         self.estudiante_input.clear()
         self.materias_input.clear()
+
+
+class RecordLoaderWidget(qtw.QWidget):
+    """Componente de carga de calificaciones a partir de archivos CSV."""
+
+    def __init__(self, parent=None):
+        """Inicializa el componente de carga de calificaciones."""
+        super().__init__(parent)
+        # Inicializa la interfaz gráfica
+        self._create_ui()
+
+    def _create_ui(self):
+        """Crea la interfaz gráfica del componente."""
+        # Estructura
+        main_layout = qtw.QVBoxLayout()
+        # Cabecera
+        main_layout.addWidget(utils.create_label_h1('Carga de calificaciones'))
+        # Formulario
+        form_layout = qtw.QFormLayout()
+        # Campo de nombre de archivo
+        self.archivo = qtw.QLineEdit()
+        self.archivo.setReadOnly(True)
+        form_layout.addRow('Archivo CSV', self.archivo)
+        main_layout.addLayout(form_layout)
+        # Botón de cargar archivo
+        cargar_btn = qtw.QPushButton('Cargar archivo')
+        cargar_btn.clicked.connect(self._load_csv_records)
+        main_layout.addWidget(cargar_btn)
+        # Tabla de datos
+        self.record_tbl = qtw.QTableView()
+        # Encabezados de la tabla
+        self.record_headers = {'ci': 'Cédula',
+                               'estudiante': 'Nombre del estudiante',
+                               'id': 'Código',
+                               'nombre': 'Materia',
+                               'uc': 'UC',
+                               'nota': 'Nota',
+                               'periodo': 'Período'}
+        # Modelo interno de la tabla
+        self.record_tbl_model = student.RecordTableModel(
+            self.record_headers, editable=True)
+        self.record_tbl.setModel(self.record_tbl_model)
+        # Configura el encabezado de la tabla
+        self.record_tbl_header = self.record_tbl.horizontalHeader()
+        for i, header in enumerate(self.record_headers.keys()):
+            # Todas las columnas se ajustan a su contenido
+            resize_mode = qtw.QHeaderView.ResizeToContents
+            if header in ['estudiante', 'nombre']:
+                # Excepto las columnas de nombres, que se expanden
+                resize_mode = qtw.QHeaderView.Stretch
+            self.record_tbl_header.setSectionResizeMode(i, resize_mode)
+        main_layout.addWidget(self.record_tbl, stretch=2)
+        # Botón de registro de calificaciones
+        registrar_btn = qtw.QPushButton('Registrar')
+        registrar_btn.clicked.connect(self._make_records)
+        main_layout.addWidget(registrar_btn)
+        self.setLayout(main_layout)
+
+    def _load_csv_records(self):
+        """Carga los datos de las calificaciones a registrar."""
+        # Diálogo de apertura de archivo
+        dialogo_archivo = qtw.QFileDialog()
+        # Solicitar archivo CSV al usuario
+        archivo = dialogo_archivo.getOpenFileName(
+            self, caption='Abrir archivo de registros', filter='*.csv')[0]
+        self.archivo.setText(archivo)
+        # Extraer contenido del CSV
+        csv = read_csv(archivo)
+        # Filtrar las filas que no tengan el número correcto de campos
+        csv = list(filter(lambda row: len(row) == 4, read_csv(archivo)))
+        if not csv:
+            # Si no quedan filas, mostrar error
+            error = ('El archivo CSV seleccionado no posee contenido o '
+                     'no tiene el número adecuado de filas. Los archivos '
+                     'de registro de calificaciones deben consistir de '
+                     'cuatro columnas: número de cédula del estudiante, '
+                     'código de materia, la calificación obtenida, y el '
+                     'período en que se cursó.')
+            utils.show_error_message(error, self)
+            return
+        # Diccionario de datos a registrar
+        por_registrar = {}
+        # Diccionario de materias por cursar de cada estudiante en el CSV
+        por_cursar = {}
+        # Para cada fila
+        for fila in csv:
+            # Crear un registro
+            record = {'ci': fila[0],
+                 'estudiante': '',
+                 'id': fila[1],
+                 'nombre': '',
+                 'uc': '',
+                 'nota': fila[2],
+                 'periodo': fila[3]}
+            # Identificadores
+            ci = record['ci']
+            materia_id = record['id']
+            # Verificar que la calificación sea un número entero
+            try:
+                # Trata de convertir la calificación a entero
+                record['nota'] = int(record['nota'])
+            except ValueError:
+                # Si no se puede, el registro es inválido. Pasar al siguiente
+                continue
+            # Verificar que el período académico del registro sea válido
+            if not validate_period(record['periodo']):
+                # Si no es válido, pasar al siguiente registro
+                continue
+            # Buscar las materias que no han sido cursadas por el estudiante de
+            # la cédula dada. Si no existe ningún estudiante con dicha cédula,
+            # el resultado será un tuple vacío
+            if ci not in por_cursar.keys():
+                mpc = crud.find_subjects_not_taken_by_student(ci)
+                por_cursar[ci] = [item['id_materia'] for item in mpc]
+            # Verificar que la materia esté en la lista de materias por
+            # cursar del estudiante
+            if materia_id in por_cursar[ci]:
+                # Si la materia no ha sido cursada por el estudiante,
+                # se busca la información faltante
+                estudiante = crud.find_student_by_ci(ci)
+                record['estudiante'] = ' '.join([estudiante["nombre"],
+                                            estudiante["apellido"]])
+                materia = crud.find_subject(materia_id)
+                record['nombre'] = materia['nombre']
+                record['uc'] = materia['uc']
+                # Se agregan los datos a la lista de registros por crear.
+                # Si esta combinación de materia y estudiante ya estaba en
+                # la lista, será reemplazada por este nuevo registro.
+                por_registrar[(ci, materia_id)] = record
+        # Convertir el diccionario de datos a lista
+        por_registrar = list(por_registrar.values())
+        if por_registrar:
+            # Si hay datos por registrar, mostrarlos en la tabla
+            self.record_tbl_model.replace_record(por_registrar)
+        else:
+            # Si no hay datos por registrar, mostrar error
+            utils.show_error_message(
+                'No se registrarán nuevos datos.', self)
+            return
+
+    def _make_records(self):
+        """Registra las nuevas calificaciones."""
+        # Verifica que todos los campos estén llenos
+        for r in self.record_tbl_model.record:
+            if not r['nota'] or not r['periodo']:
+                utils.show_error_message('No puede haber campos vacíos.', self)
+                return
+        # Crea los registros a almacenar
+        record = []
+        for r in self.record_tbl_model.record:
+            record.append({'ci_estudiante': r['ci'],
+                           'id_materia': r['id'],
+                           'nota': r['nota'],
+                           'periodo': r['periodo']})
+        # Realiza el registro en la base de datos
+        crud.create_records(record)
+        # Vacía los campos y la tabla
+        self.archivo.clear()
+        self.record_tbl_model.replace_record({})
