@@ -99,6 +99,12 @@ def read_career_info(carrera_id, test=False):
 
 # Tabla materia
 
+def find_subject(materia_id, test=False):
+    """Consulta la información de una materia por su código."""
+    query = 'SELECT * FROM materia WHERE id = %s'
+    return execute_sql(query, args=[materia_id], rows=1, test=test)
+
+
 def find_subjects(materia_ids, test=False):
     """Consulta la información de varias materias."""
     query = ('SELECT * FROM materia WHERE id IN ('
@@ -112,7 +118,8 @@ def find_career_subject(carrera_id, materia_id, test=False):
     """Consulta una materia en una carrera por su código"""
     query = ('SELECT id_materia FROM materia_carrera '
              'WHERE id_carrera = %s AND id_materia = %s')
-    return execute_sql(query, args=[carrera_id, materia_id], test=test)
+    args = [carrera_id, materia_id]
+    return execute_sql(query, args, rows=1, test=test)
 
 
 def find_career_subjects(carrera_id, materia_ids, test=False):
