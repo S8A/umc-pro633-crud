@@ -97,6 +97,15 @@ def read_career_info(carrera_id, test=False):
     return execute_sql(query, args=[carrera_id], rows=1, test=test)
 
 
+# Tabla materia
+
+def find_subjects(materia_ids, test=False):
+    """Consulta la información de varias materias."""
+    query = ('SELECT * FROM materia WHERE id IN ('
+             + ', '.join(['%s' for m in materia_ids]) + ')')
+    return execute_sql(query, args=materia_ids, test=test)
+
+
 # Tabla materia_carrera
 
 def find_career_subject(carrera_id, materia_id, test=False):
@@ -114,6 +123,7 @@ def find_career_subjects(carrera_id, materia_ids, test=False):
     args = [carrera_id]
     args.extend(materia_ids)
     return execute_sql(query, args, test=test)
+
 
 # Múltiples tablas
 
