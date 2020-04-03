@@ -139,8 +139,6 @@ class StudentRecordWidget(qtw.QWidget):
         # de estudiante único para desactivar la búsqueda por cédula
         self.estudiante = student
         self.single_mode = self.estudiante is not None
-        # Récord académico
-        self.record = {}
         # Inicializa la interfaz gráfica
         self._create_ui()
         if self.single_mode:
@@ -179,8 +177,7 @@ class StudentRecordWidget(qtw.QWidget):
                                'nota': 'Nota',
                                'periodo': 'Período'}
         # Modelo interno de la tabla
-        self.record_tbl_model = RecordTableModel(
-            self.record, self.record_headers)
+        self.record_tbl_model = RecordTableModel(self.record_headers)
         self.record_tbl.setModel(self.record_tbl_model)
         # Configura el encabezado de la tabla
         self.record_tbl_header = self.record_tbl.horizontalHeader()
@@ -234,51 +231,64 @@ class StudentRecordWidget(qtw.QWidget):
                 self)
             return
         # Buscar el récord académico con los datos obtenidos
-        self.record = crud.read_records(self.estudiante['ci'],
-                                        materia_ids,
-                                        periodo)
+        record = crud.read_records(self.estudiante['ci'],
+                                   materia_ids,
+                                   periodo)
         # Realiza el reemplazo de los datos
-        self.record_tbl_model.replace_record(self.record)
+        self.record_tbl_model.replace_record(record)
         # Actualiza la información adicional
         self._update_record_info()
 
     def _update_record_info(self):
         """Actualiza la información adicional del récord académico."""
         # Extrae las UC de las materias cursadas
-        uc_cursadas = [r['uc'] for r in self.record]
+        uc_cursadas = [r['uc'] for r in self.record_tbl_model.record]
         # Muestra el número de materias cursadas y su total de UC
         self.uc_cursadas.setText(
             f'Materias cursadas: {len(uc_cursadas)} ({sum(uc_cursadas)} UC)')
         # Extrae las UC de las materias aprobadas
-        uc_aprobadas = [r['uc'] for r in self.record if r['nota'] >= 12]
+        uc_aprobadas = [r['uc'] for r in self.record_tbl_model.record
+                        if r['nota'] >= 12]
         # Muestra el número de materias aprobadas y su total de UC
         self.uc_aprobadas.setText(
             f'Materias aprobadas: {len(uc_aprobadas)} '
             f'({sum(uc_aprobadas)} UC)')
         # Muestra el índice académico del registro dado
-        self.indice_academico.setText(
-            f'Índice Académico (IA): {calculate_ia(self.record) or "N/A"}')
+        ia = calculate_ia(self.record_tbl_model.record) or "N/A"
+        self.indice_academico.setText(f'Índice Académico (IA): {ia}')
 
 
 class RecordTableModel(qtc.QAbstractTableModel):
     """Modelo interno para tablas de récords académicos."""
 
-    def __init__(self, record, header, parent=None):
+    def __init__(self, header, record=None, editable=False, parent=None):
         """Inicializa el modelo de tabla con el récord y cabecera dados."""
         super().__init__(parent)
-        self.record = record
+        self.record = record or []
         self.header = header
+        self.editable = ['nota', 'periodo'] if editable else []
+
+    def flags(self, index):
+        """Provee las propiedades (flags) del índice dado."""
+        col = self._header_column(index.column())
+        flags = qtc.QAbstractTableModel.flags(self, index)
+        if col in self.editable:
+            # Indica si la columna es editable
+            return flags | qtc.Qt.ItemIsEditable
+        else:
+            # De lo contrario, da las flags predeterminadas
+            return flags
 
     def data(self, index, role):
-        """Obtiene los datos del récord en el índice y rol dado."""
+        """Provee los datos del récord en el índice y rol dado."""
+        row = index.row()
+        col = self._header_column(index.column())
         if role == qtc.Qt.DisplayRole:
             # Muestra los datos del índice dado
-            column_name = self._header_column(index.column())
-            return self.record[index.row()][column_name]
-
-    def _header_column(self, i):
-        """Obtiene el nombre de la columna a partir de su número."""
-        return list(self.header.keys())[i]
+            return self.record[row][col]
+        if col in self.editable and role == qtc.Qt.EditRole:
+            # Si la columna es editable, provee el dato existente
+            return self.record[row][col]
 
     def rowCount(self, parent):
         """Obtiene el número de registros."""
@@ -292,8 +302,46 @@ class RecordTableModel(qtc.QAbstractTableModel):
         """Obtiene los datos de la cabecera de la tabla."""
         if role == qtc.Qt.DisplayRole:
             if orientation == qtc.Qt.Horizontal:
-                column_name = self._header_column(section)
-                return str(self.header[column_name])
+                col = self._header_column(section)
+                return str(self.header[col])
+
+    def setData(self, index, value, role):
+        """Realiza la edición de datos de la tabla."""
+        row = index.row()
+        col = self._header_column(index.column())
+        if col in self.editable and role == qtc.Qt.EditRole:
+            # Si se está editando en una columna editable
+            if col == 'nota':
+                # Si se edita la nota
+                try:
+                    # Trata de convertir el valor ingresado a entero
+                    nota = int(value)
+                    if nota in range(21):
+                        # Si la nota ingresada está entre 0 y 20,
+                        # registrar el nuevo valor
+                        self.record[row][col] = value
+                        self.dataChanged.emit(index, index)
+                        # Cambio exitoso
+                        return True
+                except ValueError:
+                    # Si no se puede convertir a entero,
+                    # la entrada es inválida. Cambio fallido.
+                    return False
+            elif col == 'periodo':
+                # Si se edita la columna del período académico
+                if validate_period(value):
+                    # Si el valor ingresado es un período válido,
+                    # registrar el nuevo valor
+                    self.record[row][col] = value
+                    self.dataChanged.emit(index, index)
+                    # Cambio exitoso
+                    return True
+        # Si no se cumplen las condiciones, el cambio no fue exitoso
+        return False
+
+    def _header_column(self, i):
+        """Obtiene el nombre de la columna a partir de su número."""
+        return list(self.header.keys())[i]
 
     def replace_record(self, record):
         """Reemplaza los registros de la tabla."""
