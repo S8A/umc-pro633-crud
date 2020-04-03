@@ -3,8 +3,8 @@
 
 La ejecución del programa debe comenzar en este módulo.
 
-La función main() toma los argumentos ingresados, verifica la
-configuración y ejecuta el controlador del flujo del programa.
+La función main() toma los argumentos ingresados, crea una
+QApplication y ejecuta el controlador del flujo del programa.
 """
 
 
@@ -18,8 +18,16 @@ from . import admin, config, login, student
 class MainController:
     """Controlador del flujo del programa."""
 
-    def __init__(self):
-        pass
+    def __init__(self, args):
+        """Inicializa el controlador del flujo del programa."""
+        if args['config'] or not is_configured():
+            # Si el programa se inicia con --config o
+            # no está configurado, inicia el diálogo de
+            # configuración
+            self.show_config_window()
+        else:
+            # De lo contrario, inicia el diálogo de inicio de sesión
+            self.show_login_window()
 
     def show_config_window(self):
         """Muestra la ventana de configuración."""
@@ -56,11 +64,7 @@ class MainController:
 def main(args):
     """Función principal del programa."""
     app = QApplication(sys.argv)
-    control = MainController()
-    if args['config'] or not is_configured():
-        control.show_config_window()
-    else:
-        control.show_login_window()
+    control = MainController(args)
     sys.exit(app.exec())
 
 
