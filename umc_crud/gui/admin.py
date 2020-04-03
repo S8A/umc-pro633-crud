@@ -78,7 +78,8 @@ class MainWindow(qtw.QMainWindow):
 
     def _delete_records(self):
         """Crea la interfaz de eliminación de calificaciones."""
-        print('TODO: _delete_records')
+        self.setCentralWidget(RecordDeleterWidget())
+        self.resize(700, 600)
 
 
 class RecordMakerWidget(qtw.QWidget):
@@ -471,6 +472,115 @@ class RecordUpdaterWidget(qtw.QWidget):
                            'periodo': r['periodo']})
         # Realizar la modificación en la base de datos
         crud.update_records(record)
+        # Vaciar los campos y la tabla
+        self.estudiante_ci = None
+        self.estudiante_input.clear()
+        self.materias_input.clear()
+        self.record_tbl_model.replace_record([])
+
+
+class RecordDeleterWidget(qtw.QWidget):
+    """Componente de eliminación de calificaciones."""
+
+    def __init__(self, parent=None):
+        """Inicializa el componente de eliminación de calificaciones."""
+        super().__init__(parent)
+        self.estudiante_ci = None
+        # Inicializa la interfaz gráfica
+        self._create_ui()
+
+    def _create_ui(self):
+        """Crea la interfaz gráfica del componente."""
+        # Estructura
+        main_layout = qtw.QVBoxLayout()
+        # Cabecera
+        main_layout.addWidget(utils.create_label_h1(
+            'Modificación de calificaciones'))
+        # Formulario de búsqueda
+        form_layout = qtw.QFormLayout()
+        # Campo de cédula del estudiante
+        self.estudiante_input = qtw.QLineEdit()
+        form_layout.addRow('Estudiante (C.I.)', self.estudiante_input)
+        # Campo de materias a registrar
+        self.materias_input = qtw.QLineEdit()
+        form_layout.addRow('Materias', self.materias_input)
+        main_layout.addLayout(form_layout)
+        # Botón de búsqueda
+        buscar_btn = qtw.QPushButton('Buscar')
+        buscar_btn.clicked.connect(self._prepare_records)
+        main_layout.addWidget(buscar_btn)
+        # Tabla de datos
+        self.record_tbl = qtw.QTableView()
+        # Encabezados de la tabla
+        self.record_headers = {'id': 'Código',
+                               'nombre': 'Materia',
+                               'uc': 'UC',
+                               'nota': 'Nota',
+                               'periodo': 'Período'}
+        # Modelo interno de la tabla
+        self.record_tbl_model = student.RecordTableModel(self.record_headers)
+        self.record_tbl.setModel(self.record_tbl_model)
+        # Configura el encabezado de la tabla
+        self.record_tbl_header = self.record_tbl.horizontalHeader()
+        for i, header in enumerate(self.record_headers.keys()):
+            # Todas las columnas se ajustan a su contenido
+            resize_mode = qtw.QHeaderView.ResizeToContents
+            if header == 'nombre':
+                # Excepto la columna del nombre de materia, que se expande
+                resize_mode = qtw.QHeaderView.Stretch
+            self.record_tbl_header.setSectionResizeMode(i, resize_mode)
+        main_layout.addWidget(self.record_tbl, stretch=2)
+        # Botón de eliminación de calificaciones
+        eliminar_btn = qtw.QPushButton('Eliminar')
+        eliminar_btn.clicked.connect(self._delete_records)
+        main_layout.addWidget(eliminar_btn)
+        self.setLayout(main_layout)
+
+    def _prepare_records(self):
+        """Prepara los datos de las calificaciones a eliminar."""
+        # Extraer la cédula ingresada
+        ci = self.estudiante_input.text().strip()
+        if not ci:
+            # Si no se ingresó ninguna cédula, mostrar error
+            utils.show_error_message('Ingrese un número de cédula.', self)
+            return
+        elif not crud.find_student_by_ci(ci):
+            # Si no se encuentra el estudiante, mostrar error
+            utils.show_error_message('Estudiante no encontrado.', self)
+            return
+        else:
+            # Si se encuentra, almacenar su cédula en el componente
+            self.estudiante_ci = ci
+        # Verificar que se hayan ingresado materias para registrar
+        materia_ids = self.materias_input.text().upper().strip()
+        if not materia_ids:
+            utils.show_error_message(
+                'Ingrese materias para modificar sus calificaciones.', self)
+            return
+        # Extraer las materias ingresadas
+        materia_ids = split_list(materia_ids)
+        # Buscar el récord académico con los datos obtenidos
+        record = crud.read_records(self.estudiante_ci, materia_ids)
+        if not record:
+            # Si no se consiguen registros de las materias dadas en
+            # el récord del estudiante, mostrar error
+            utils.show_error_message(
+                'Ingrese materias que el estudiante haya cursado.', self)
+            return
+        # Realizar el reemplazo de los datos
+        self.record_tbl_model.replace_record(record)
+
+    def _delete_records(self):
+        """Elimina las calificaciones seleccionadas."""
+        # Crear los registros a eliminar
+        record = []
+        for r in self.record_tbl_model.record:
+            record.append({'ci_estudiante': self.estudiante_ci,
+                           'id_materia': r['id'],
+                           'nota': r['nota'],
+                           'periodo': r['periodo']})
+        # Realizar la eliminación en la base de datos
+        crud.delete_records(record)
         # Vaciar los campos y la tabla
         self.estudiante_ci = None
         self.estudiante_input.clear()
